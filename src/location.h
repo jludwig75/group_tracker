@@ -3,6 +3,9 @@
 #include <stdint.h>
 
 
+#define LOCATION_BLOB_BYES  16
+
+
 class Location
 {
 public:
@@ -18,7 +21,6 @@ public:
 
     bool un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes);
 
-    unsigned get_blob_bytes() const;
     bool pack(uint8_t *blob_buffer, unsigned buffer_bytes) const;
 
     void increment_hop_count();

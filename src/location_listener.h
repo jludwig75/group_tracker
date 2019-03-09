@@ -2,21 +2,26 @@
 
 #include "worker.h"
 
-//#include <LoRa.h>
+#include "location.h"
+#include "location_list.h"
+
+class LoRaInterface;
 
 
-class Location;
+#define MAX_PEER_LOCATIONS  8
 
 
 class LocationListener : public Worker
 {
 public:
-    LocationListener(/*LoRaClass &lora_interface*/);
+    LocationListener(LoRaInterface &lora_interface);
 
-    Location *get_most_recent_location() const;
-    Location *get_previous_location(Location *location) const;
+    const Location *get_most_recent_location() const;
+    const Location *get_previous_location(const Location *location) const;
 
 private:
     virtual void work_func();
-    //LoRaClass &_lora_interface;
+
+    LoRaInterface &_lora_interface;
+    LocationList _peer_locations;
 };

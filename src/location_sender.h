@@ -1,13 +1,14 @@
 #pragma once
 
-//#include <LoRa.h>
-
 #include "worker.h"
 
 #include "location.h"
 
+
 class LocationTracker;
 class LocationListener;
+class LoRaInterface;
+
 
 #define MAX_LOCATIONS_TO_SEND   8
 
@@ -15,7 +16,7 @@ class LocationListener;
 class LocationSender : public Worker
 {
 public:
-    LocationSender(/*LoRaClass &lora_interface,*/
+    LocationSender(LoRaInterface &lora_interface,
                     const LocationTracker &location_tracker,
                     const LocationListener &location_listener,
                     unsigned max_locations_to_send,
@@ -25,7 +26,7 @@ public:
     void send_locations();
 
 private:
-    virtual void work_func() = 0;
+    virtual void work_func();
 
     enum SenderState
     {
@@ -39,7 +40,7 @@ private:
 
     unsigned copy_locations_to_send();
     
-    //LoRaClass &_lora_interface;
+    LoRaInterface &_lora_interface;
     const LocationTracker &_location_tracker;
     const LocationListener &_location_listener;
     const unsigned _max_locations_to_send;

@@ -20,6 +20,8 @@ struct LocationBlob
     uint32_t crc : 16;
 };
 
+static_assert(sizeof(LocationBlob) == LOCATION_BLOB_BYES, "\"LocationBlob\" data structure size not as expected");
+
 #define COORD_MIN   -180UL
 #define COORD_MAX    180UL
 #define ACCURACY_MULTIPLIER 100000UL
@@ -69,7 +71,7 @@ Location::Location() :
 
 bool Location::un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes)
 {
-    if (blob_buffer == NULL || buffer_bytes < get_blob_bytes())
+    if (blob_buffer == NULL || buffer_bytes < LOCATION_BLOB_BYES)
     {
         return false;
     }
@@ -122,11 +124,6 @@ float Location::get_latitude() const
 void Location::increment_hop_count()
 {
     _hop_count += 1;
-}
-
-unsigned Location::get_blob_bytes() const
-{
-    return sizeof(LocationBlob);
 }
 
 bool Location::pack(uint8_t *blob_buffer, unsigned buffer_bytes) const

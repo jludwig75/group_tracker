@@ -2,15 +2,18 @@
 
 #include "location_tracker.h"
 #include "location_listener.h"
+#include "lora_interface.h"
+
+#include <stdlib.h>
 
 
-LocationSender::LocationSender(/*LoRaClass &lora_interface,*/
+LocationSender::LocationSender(LoRaInterface &lora_interface,
                 const LocationTracker &location_tracker,
                 const LocationListener &location_listener,
                 unsigned max_locations_to_send,
                 unsigned max_time_slice_us) :
     Worker(max_time_slice_us),
-    //_lora_interface(lora_interface),
+    _lora_interface(lora_interface),
     _location_tracker(location_tracker),
     _location_listener(location_listener),
     _max_locations_to_send(max_locations_to_send),
@@ -21,7 +24,7 @@ LocationSender::LocationSender(/*LoRaClass &lora_interface,*/
 
 bool LocationSender::send_location(const Location *location, bool async)
 {
-    uint8_t location_blob[32];
+    uint8_t location_blob[LOCATION_BLOB_BYES];
 
     if (!location->pack(location_blob, sizeof(location_blob)))
     {
@@ -30,9 +33,9 @@ bool LocationSender::send_location(const Location *location, bool async)
 
     // TODO: Do we add retries? Probably not to keep from taking too much time.
     // The HW probably has enough retries. Probably best to get out quickly and wait to try again.
-    //_lora_interface.beginPacket();
-    //_lora_interface.write(location_blob, location->get_blob_bytes());
-    //_lora_interface.endPacket(async);
+    _lora_interface.beginPacket();
+    _lora_interface.write(location_blob, LOCATION_BLOB_BYES);
+    _lora_interface.endPacket();    // async); TODO: I don't have the latest version of the library.
 
     return true;
 }
@@ -66,7 +69,7 @@ void LocationSender::work_func()
         case SEND_MY_LOCATION:
             {
                 bool have_peer_locations_to_send = _location_listener.get_most_recent_location() != NULL;
-                // We have been told to start send our location.
+                // We have been told to start sending our location.
                 if (!send_location(&_location_tracker.get_current_location()), have_peer_locations_to_send)
                 {
                     // TODO: log this
@@ -134,7 +137,7 @@ void LocationSender::work_func()
 unsigned LocationSender::copy_locations_to_send()
 {
     _number_of_locations_to_send = 0;
-    for(Location *location = _location_listener.get_most_recent_location();
+    for(const Location *location = _location_listener.get_most_recent_location();
         location != NULL && _number_of_locations_to_send < _max_locations_to_send;
         location = _location_listener.get_previous_location(location))
     {
