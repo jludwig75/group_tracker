@@ -65,6 +65,7 @@ void LocationListener::work_func()
             return;
         }
 
+        // TODO: Don't add this station's location.
         _peer_locations.store_location(location);
     }    
 }
