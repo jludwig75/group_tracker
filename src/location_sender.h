@@ -16,14 +16,15 @@ class LoRaInterface;
 class LocationSender : public Worker
 {
 public:
-    LocationSender(LoRaInterface &lora_interface,
+    LocationSender(uint32_t station_id,
+                    LoRaInterface &lora_interface,
                     const LocationTracker &location_tracker,
                     const LocationListener &location_listener,
                     unsigned max_locations_to_send,
                     unsigned max_time_slice_us);
     
     // Callable from interrupt
-    void send_locations();
+    void send_locations(uint32_t second);
 
 private:
     virtual void work_func();
@@ -40,6 +41,7 @@ private:
 
     unsigned copy_locations_to_send();
     
+    uint32_t _station_id;
     LoRaInterface &_lora_interface;
     const LocationTracker &_location_tracker;
     const LocationListener &_location_listener;

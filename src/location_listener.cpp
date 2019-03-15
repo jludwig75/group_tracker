@@ -4,8 +4,9 @@
 
 
 
-LocationListener::LocationListener(LoRaInterface &lora_interface) :
-    Worker(1000),
+LocationListener::LocationListener(uint32_t station_id, LoRaInterface &lora_interface) :
+    Worker(5000),
+    _station_id(station_id),
     _lora_interface(lora_interface),
     _peer_locations()
 {
@@ -15,7 +16,6 @@ LocationListener::LocationListener(LoRaInterface &lora_interface) :
 
 void LocationListener::work_func()
 {
-    uint8_t receive_buffer[LOCATION_BLOB_BYES];
 
     /*
      * TODO: Learn about errors and what to do with these functions.
@@ -27,15 +27,15 @@ void LocationListener::work_func()
 
 
     unsigned packetSize = _lora_interface.parsePacket();
-    if (packetSize >= sizeof(receive_buffer)) {
-        if (packetSize > sizeof(receive_buffer))
+    if (packetSize >= sizeof(_receive_buffer)) {
+        if (packetSize > sizeof(_receive_buffer))
         {
             // TODO: log this. Need to know if this can happen.
         }
 
         // read packet
         unsigned i = 0;
-        while (_lora_interface.available() && i < sizeof(receive_buffer)) {
+        while (_lora_interface.available() && i < sizeof(_receive_buffer)) {
             int byte_read = _lora_interface.read();
             if (byte_read < 0 || byte_read > UINT8_MAX)
             {
@@ -44,11 +44,11 @@ void LocationListener::work_func()
                 // if available returned 0 bytes. Shouldn't happen. Either way we'll exit.
                 return;
             }
-            receive_buffer[i] = (uint8_t)byte_read;
+            _receive_buffer[i] = (uint8_t)byte_read;
             i++;
         }
 
-        if (i != sizeof(receive_buffer))
+        if (i != sizeof(_receive_buffer))
         {
             // TODO: Log this
             return;
@@ -58,15 +58,17 @@ void LocationListener::work_func()
         //Serial.print("' with RSSI ");
         //Serial.println(_lora_interface.packetRssi());
 
-        Location location;
-        if (!location.un_pack(receive_buffer, sizeof(receive_buffer)))
+        if (!_location.un_pack(_receive_buffer, sizeof(_receive_buffer)))
         {
             // TODO: Log this
             return;
         }
 
-        // TODO: Don't add this station's location.
-        _peer_locations.store_location(location);
+        if (_location.get_station_id() != _station_id)
+        {
+            // Don't store our own location as a peer location.
+            _peer_locations.store_location(_location);
+        }
     }    
 }
 

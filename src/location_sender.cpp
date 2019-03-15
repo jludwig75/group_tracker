@@ -7,12 +7,14 @@
 #include <stdlib.h>
 
 
-LocationSender::LocationSender(LoRaInterface &lora_interface,
+LocationSender::LocationSender(uint32_t station_id,
+                LoRaInterface &lora_interface,
                 const LocationTracker &location_tracker,
                 const LocationListener &location_listener,
                 unsigned max_locations_to_send,
                 unsigned max_time_slice_us) :
     Worker(max_time_slice_us),
+    _station_id(station_id),
     _lora_interface(lora_interface),
     _location_tracker(location_tracker),
     _location_listener(location_listener),
@@ -40,7 +42,7 @@ bool LocationSender::send_location(const Location *location, bool async)
     return true;
 }
 
-void LocationSender::send_locations()
+void LocationSender::send_locations(uint32_t second)
 {
     // This is called from the interrupt.
     // Don't do anything here, just transition the state.

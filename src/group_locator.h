@@ -3,6 +3,7 @@
 #include "location_tracker.h"
 #include "location_listener.h"
 #include "location_sender.h"
+#include "gps_clock.h"
 
 
 class Stream;
@@ -16,15 +17,16 @@ class LoraInterface;
 class GroupLocator
 {
 public:
-    GroupLocator(Stream & gps_serial_interface, LoRaInterface &lora_interface);
+    GroupLocator(uint32_t station_id, SoftwareSerial *gps_serial_interface, LoRaInterface &lora_interface);
 
-    bool begin();
+    void begin();
 
     void on_pps_interrupt();
 
     void on_loop();
 
 private:
+    GpsClock _gps_clock;
     LocationTracker _location_tracker;
     LocationListener _location_listener;
     LocationSender _location_sender;

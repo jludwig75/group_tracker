@@ -3,19 +3,26 @@
 #include "worker.h"
 
 #include "location.h"
+#include <my_Adafruit_GPS.h>
 
-class Stream;
+class SoftwareSerial;
+class GpsClock;
 
 class LocationTracker : public Worker
 {
 public:
-    LocationTracker(Stream & gps_serial_interface);
+    LocationTracker(uint32_t station_id, SoftwareSerial *gps_serial_interface, GpsClock &gps_clock);
+
+    void begin();
 
     const Location &get_current_location() const;
 
 private:
     virtual void work_func();
 
-    Stream & gps_serial_interface;
+    uint32_t _station_id;
+    SoftwareSerial *_gps_serial_interface;
+    Adafruit_GPS _gps;
+    GpsClock &_gps_clock;
     Location _current_location;
 };
