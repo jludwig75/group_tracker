@@ -3,6 +3,7 @@
 #include "location_tracker.h"
 #include "location_listener.h"
 #include "lora_interface.h"
+#include "debug_log.h"
 
 #include <stdlib.h>
 
@@ -74,19 +75,26 @@ void LocationSender::work_func()
         _state = IDLE;
 
         // Send my location
+        debug_log.info("LocationSender: sending my location.\n");
         if (!send_my_location())
         {
+            debug_log.info("LocationSender: exiting after sending my location.\n");
             return;
         }
 
         // Copy locations
+        debug_log.info("LocationSender: copying peer locations.\n");
         if (!copy_locations_to_send())
         {
+            debug_log.error("LocationSender: exiting after copying peer location.\n");
             return;
         }
 
         // Send the peer locations
+        debug_log.info("LocationSender: sending peer locations.\n");
         send_peer_locations();
+
+        debug_log.info("LocationSender: done sending peer locations.\n");
     }
 }
 
@@ -99,12 +107,13 @@ bool LocationSender::send_my_location()
     _location_tracker.get_current_location(_working_location);
     if (!send_location(&_working_location, have_peer_locations_to_send))
     {
-        // TODO: log this
         // TODO: should we exit or send the peer locations?
         // probably stop, because there is a HW problem
+        debug_log.error("LocationSender: Error sending my location\n");
         return false;
     }
 
+    debug_log.info("LocationSender: have %speer locations to send\n", have_peer_locations_to_send ? "" : "no ");
     return have_peer_locations_to_send;
 }
 
@@ -124,20 +133,25 @@ bool LocationSender::copy_locations_to_send()
         // TODO: This means this changed. This could happen if the policy changed in the time since the check.
         // That would mean a location/locations aged out. Otherwise it cannot change, because the listener is
         // not running.
+        debug_log.info("LocationSender: Number of locations went to 0 unexpectedly\n");
         abort_async_send();
     }
 
+    debug_log.info("LocationSender: %u peer locations to send\n", _number_of_locations_to_send);
     return _number_of_locations_to_send > 0;
 }
 
 void LocationSender::send_peer_locations()
 {
     unsigned number_of_locations_sent = 0;
+    debug_log.info("LocationSender: sending %u peer locations\n", _number_of_locations_to_send);
     while (number_of_locations_sent < _number_of_locations_to_send)
     {
+        debug_log.info("LocationSender: sending peer locations %u of %u\n", number_of_locations_sent, _number_of_locations_to_send);
         if (should_yield())
         {
             // Abort the async operation, because we're not going to get to it.
+            debug_log.error("LocationSender: over time allowance sending peer locations\n");
             abort_async_send();
             return;
         }
@@ -149,10 +163,12 @@ void LocationSender::send_peer_locations()
             // TODO: This may be a tune point.
             // We may need to do something here to abort the asynch send as above.
             // TODO: Not sure if this is needed after an error.
+            debug_log.error("LocationSender: error sending peer location");
             abort_async_send();
             return;
         }
 
         number_of_locations_sent++;
     }
+    debug_log.info("LocationSender: sent %u peer locations\n", number_of_locations_sent);
 }

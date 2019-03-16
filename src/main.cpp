@@ -5,6 +5,7 @@
 #include "group_locator.h"
 #include "lora_interface.h"
 #include "hw_lora_interface.h"
+#include "debug_log.h"
 
 #define GPS_RX_PIN          8
 #define GPS_TX_PIN          9
@@ -31,6 +32,8 @@ GroupLocator locator(station_id,
                      PEER_LOCATIONS_TO_STORE,
                      MAX_PEER_LOCATIONS_TO_SEND);
 
+DebugLog debug_log(Serial);
+
 void pps_interrupt()
 {
     locator.on_pps_interrupt();
@@ -47,6 +50,8 @@ void setup()
 {
     Serial.begin(9600);
     
+    debug_log.info("Group Locator starting...\n");
+    
     // Start the locator
     locator.begin();
 
@@ -59,6 +64,8 @@ void setup()
     // Setup the PPS interrupt
     pinMode(PPS_INTERRUPT_PIN, INPUT);
     attachInterrupt(digitalPinToInterrupt(PPS_INTERRUPT_PIN), pps_interrupt, RISING);
+
+    debug_log.info("Group Locator started\n");
 }
 
 void loop()

@@ -1,5 +1,7 @@
 #include "group_locator.h"
 
+#include "debug_log.h"
+
 #define LISTENER_IDX    0
 #define SENDER_IDX      1
 #define GPS_IDX         2
@@ -31,6 +33,7 @@ GroupLocator::GroupLocator(uint32_t station_id,
 
 void GroupLocator::begin()
 {
+    debug_log.info("Starting group locator\n");
     _location_tracker.begin();
 }
 
@@ -41,6 +44,7 @@ uint32_t GroupLocator::get_active_station_number(uint32_t second) const
 
 void GroupLocator::on_pps_interrupt()
 {
+    debug_log.debug("GroupLocator::on_pps_interrupt: enter\n");
     // We know we have a fix if we got a PPS interrupt
     _gps_clock.on_pps_pulse();
     // Don't do anything if the time has not yet been set.
@@ -51,16 +55,23 @@ void GroupLocator::on_pps_interrupt()
         if (_station_id == get_active_station_number(second))
         {
             // We're up. Start sending our packets
+            debug_log.debug("Station is live to send locations");
             _active_worker = SENDER_IDX;
             _location_sender.start_sending_locations(second);
         }
         else
         {
             // Not our turn. Enable listener
+            debug_log.debug("Station is listening for locations");
             _active_worker = LISTENER_IDX;
         }
         
     }
+    else
+    {
+        debug_log.debug("GroupLocator::on_pps_interrupt: time not yet set");
+    }
+    
 }
 
 void GroupLocator::on_loop()
