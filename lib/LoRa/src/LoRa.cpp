@@ -3,6 +3,10 @@
 
 #include <LoRa.h>
 
+#ifndef digitalPinToInterrupt
+#define digitalPinToInterrupt(x)    x
+#endif  // digitalPinToInterrupt
+
 // registers
 #define REG_FIFO                 0x00
 #define REG_OP_MODE              0x01

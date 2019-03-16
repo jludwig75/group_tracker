@@ -18,6 +18,9 @@
 
 const uint32_t station_id = 0;
 
+#ifndef digitalPinToInterrupt
+#define digitalPinToInterrupt(x)    x
+#endif  // digitalPinToInterrupt
 
 HwLoRaInterface lora(LoRa);
 
@@ -50,7 +53,7 @@ void setup()
 {
     Serial.begin(9600);
     
-    debug_log.info("Group Locator starting...\n");
+    DBG_LOG_INFO("Group Locator starting...\n");
     
     // Start the locator
     locator.begin();
@@ -65,7 +68,7 @@ void setup()
     pinMode(PPS_INTERRUPT_PIN, INPUT);
     attachInterrupt(digitalPinToInterrupt(PPS_INTERRUPT_PIN), pps_interrupt, RISING);
 
-    debug_log.info("Group Locator started\n");
+    DBG_LOG_INFO("Group Locator started\n");
 }
 
 void loop()

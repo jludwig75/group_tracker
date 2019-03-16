@@ -1,6 +1,7 @@
 #include "location_tracker.h"
 
 #include "gps_clock.h"
+#include "debug_log.h"
 
 #include <stdlib.h>
 #include <SoftwareSerial.h>
@@ -58,6 +59,7 @@ void LocationTracker::work_func()
         boolean date_and_time_updated = false;
         if (!_gps.parse(_gps.lastNMEA(), &date_and_time_updated))   // this also sets the newNMEAreceived() flag to false
         {
+            DBG_LOG_ERROR("LT: error parsing NMEA");
             return;  // we can fail to parse a sentence in which case we should just wait for the next sentence.
         }
         if (_gps.fix > 0 && date_and_time_updated)
@@ -73,6 +75,7 @@ void LocationTracker::work_func()
             tm.Minute = _gps.minute;
             tm.Second = _gps.seconds;
             time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
+            DBG_LOG_INFO("LT: updated current location");
             _current_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
         }
     }
