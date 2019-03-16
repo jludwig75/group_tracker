@@ -24,7 +24,7 @@ public:
                     unsigned max_time_slice_us);
     
     // Callable from interrupt
-    void send_locations(uint32_t second);
+    void start_sending_locations(uint32_t second);
 
 private:
     virtual void work_func();
@@ -50,4 +50,7 @@ private:
     Location _locations_to_send[MAX_LOCATIONS_TO_SEND];
     unsigned _number_of_locations_to_send;
     unsigned _number_of_locations_sent;
+
+    // Keep this off of the stack
+    Location _working_location;
 };

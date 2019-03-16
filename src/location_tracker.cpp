@@ -22,9 +22,9 @@ void LocationTracker::begin()
     _gps.begin(9600);
     
     // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+    //_gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
     // uncomment this line to turn on only the "minimum recommended" data
-    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+    //_gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
     // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
     // the parser doesn't care about other sentences at this time
     
@@ -34,16 +34,19 @@ void LocationTracker::begin()
     // print it out we don't suggest using anything higher than 1 Hz
 
     // Request updates on antenna status, comment out to keep quiet
-    _gps.sendCommand(PGCMD_ANTENNA);
+    //_gps.sendCommand(PGCMD_ANTENNA);
 
     delay(1000);
     // Ask for firmware version
     _gps_serial_interface->println(PMTK_Q_RELEASE);
 }
 
-const Location &LocationTracker::get_current_location() const
+void LocationTracker::get_current_location(Location &location) const
 {
-    return _current_location;
+    // Synchronize with timer
+    noInterrupts();
+    location = _current_location;
+    interrupts();
 }
 
 void LocationTracker::work_func()

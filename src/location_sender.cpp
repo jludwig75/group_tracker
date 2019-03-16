@@ -42,7 +42,7 @@ bool LocationSender::send_location(const Location *location, bool async)
     return true;
 }
 
-void LocationSender::send_locations(uint32_t second)
+void LocationSender::start_sending_locations(uint32_t second)
 {
     // This is called from the interrupt.
     // Don't do anything here, just transition the state.
@@ -72,7 +72,8 @@ void LocationSender::work_func()
             {
                 bool have_peer_locations_to_send = _location_listener.get_most_recent_location() != NULL;
                 // We have been told to start sending our location.
-                if (!send_location(&_location_tracker.get_current_location()), have_peer_locations_to_send)
+                _location_tracker.get_current_location(_working_location);
+                if (!send_location(&_working_location), have_peer_locations_to_send)
                 {
                     // TODO: log this
                     // TODO: should we exit or send the peer locations?

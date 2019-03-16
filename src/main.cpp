@@ -6,9 +6,11 @@
 #include "lora_interface.h"
 #include "hw_lora_interface.h"
 
-#define GPS_RX_PIN  8
-#define GPS_TX_PIN  9
-#define PPS_INTERRUPT_PIN 2
+#define GPS_RX_PIN          8
+#define GPS_TX_PIN          9
+#define PPS_INTERRUPT_PIN   2
+#define STATIONS_PER_GROUP  30
+#define TX_TIME_SEC         1
 
 const uint32_t station_id = 0;
 
@@ -17,12 +19,24 @@ HwLoRaInterface lora(LoRa);
 
 SoftwareSerial gps_serial_port(GPS_RX_PIN, GPS_TX_PIN);
 
-GroupLocator locator(station_id, &gps_serial_port, lora);
+GroupLocator locator(station_id,
+                     STATIONS_PER_GROUP,
+                     &gps_serial_port,
+                     lora,
+                     true,
+                     TX_TIME_SEC);
 
 void pps_interrupt()
 {
     locator.on_pps_interrupt();
 }
+
+// Interrupt is called once a millisecond, looks for any new GPS data, and stores it
+SIGNAL(TIMER0_COMPA_vect)
+{
+    locator.on_gps_timer();
+}
+
 
 void setup()
 {
@@ -30,6 +44,12 @@ void setup()
     
     // Start the locator
     locator.begin();
+
+    // Start the GPS timer
+    // Timer0 is already used for millis() - we'll just interrupt somewhere
+    // in the middle and call the "Compare A" function above
+    OCR0A = 0xAF;
+    TIMSK0 |= _BV(OCIE0A);
 
     // Setup the PPS interrupt
     pinMode(PPS_INTERRUPT_PIN, INPUT);

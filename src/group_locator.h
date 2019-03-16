@@ -17,7 +17,12 @@ class LoraInterface;
 class GroupLocator
 {
 public:
-    GroupLocator(uint32_t station_id, SoftwareSerial *gps_serial_interface, LoRaInterface &lora_interface);
+    GroupLocator(uint32_t station_id,
+                 unsigned stations_per_group,
+                 SoftwareSerial *gps_serial_interface,
+                 LoRaInterface &lora_interface,
+                 bool use_timer_for_gps,
+                 unsigned transmission_time_sec);
 
     void begin();
 
@@ -25,7 +30,16 @@ public:
 
     void on_loop();
 
+    void on_gps_timer();
+
 private:
+    uint32_t get_active_station_number(uint32_t second) const;
+
+    uint32_t _station_id;
+    unsigned _stations_per_group;
+    unsigned _active_worker;
+    bool _use_timer_for_gps;
+    unsigned _transmission_time_sec;
     GpsClock _gps_clock;
     LocationTracker _location_tracker;
     LocationListener _location_listener;

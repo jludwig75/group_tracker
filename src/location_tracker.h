@@ -15,7 +15,7 @@ public:
 
     void begin();
 
-    const Location &get_current_location() const;
+    void get_current_location(Location &location) const;
 
 private:
     virtual void work_func();
