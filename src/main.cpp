@@ -7,8 +7,11 @@
 #include "hw_lora_interface.h"
 #include "debug_log.h"
 
-#define GPS_RX_PIN          8
-#define GPS_TX_PIN          9
+#define LORA_SS_PIN         8
+#define LORA_RESET_PIN      4
+#define LORA_DIO0_PIN       7
+#define GPS_RX_PIN          5
+#define GPS_TX_PIN          6
 #define PPS_INTERRUPT_PIN   2
 
 #define STATIONS_PER_GROUP          30
@@ -54,6 +57,13 @@ void setup()
     Serial.begin(9600);
     
     DBG_LOG_INFO("Group Locator starting...\n");
+    
+    // Initialize LORA
+    LoRa.setPins(LORA_SS_PIN, LORA_RESET_PIN, LORA_DIO0_PIN);
+    if (!LoRa.begin(433E6)) {
+        Serial.println("Starting LoRa failed!");
+        while (1);
+    }
     
     // Start the locator
     locator.begin();
