@@ -1,10 +1,11 @@
 #pragma once
 
+#include <stdint.h>
 
 class Worker
 {
 public:
-    Worker(unsigned long max_time_slice_us);
+    Worker(uint32_t max_time_slice_us = 50000);
     virtual ~Worker();
 
     void do_work();
@@ -13,6 +14,6 @@ protected:
     bool should_yield() const;
     virtual void work_func() = 0;
 
-    unsigned long _max_time_slice_us;
-    unsigned long _work_start_time;
+    uint32_t _max_time_slice_us;
+    uint32_t _work_start_time;
 };

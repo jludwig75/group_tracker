@@ -4,13 +4,12 @@
 
 
 
-LocationListener::LocationListener(uint32_t station_id, LoRaInterface &lora_interface) :
-    Worker(5000),
+LocationListener::LocationListener(uint32_t station_id, LoRaInterface &lora_interface, unsigned max_peer_locations_to_store) :
+    Worker(),
     _station_id(station_id),
     _lora_interface(lora_interface),
-    _peer_locations()
+    _peer_locations(max_peer_locations_to_store)
 {
-
 }
 
 
@@ -54,10 +53,6 @@ void LocationListener::work_func()
             return;
         }
 
-        // print RSSI of packet
-        //Serial.print("' with RSSI ");
-        //Serial.println(_lora_interface.packetRssi());
-
         if (!_location.un_pack(_receive_buffer, sizeof(_receive_buffer)))
         {
             // TODO: Log this
@@ -67,17 +62,17 @@ void LocationListener::work_func()
         if (_location.get_station_id() != _station_id)
         {
             // Don't store our own location as a peer location.
-            _peer_locations.store_location(_location);
+            _peer_locations.store_location(_lora_interface.packetRssi(), _lora_interface.packetSnr(), _location);
         }
     }    
 }
 
-const Location *LocationListener::get_most_recent_location() const
+const Location *LocationListener::get_fist_location() const
 {
-    return _peer_locations.get_most_recent_location();
+    return _peer_locations.get_fist_location();
 }
 
-const Location *LocationListener::get_previous_location(const Location *location) const
+const Location *LocationListener::get_next_location(const Location *location) const
 {
-    return _peer_locations.get_previous_location(location);
+    return _peer_locations.get_next_location(location);
 }

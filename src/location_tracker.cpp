@@ -7,7 +7,7 @@
 
 
 LocationTracker::LocationTracker(uint32_t station_id, SoftwareSerial *gps_serial_interface, GpsClock &gps_clock) :
-    Worker(5000),
+    Worker(),
     _station_id(station_id),
     _gps_serial_interface(gps_serial_interface),
     _gps(gps_serial_interface),

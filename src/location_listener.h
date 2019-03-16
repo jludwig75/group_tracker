@@ -14,10 +14,10 @@ class LoRaInterface;
 class LocationListener : public Worker
 {
 public:
-    LocationListener(uint32_t station_id, LoRaInterface &lora_interface);
+    LocationListener(uint32_t station_id, LoRaInterface &lora_interface, unsigned max_peer_locations_to_store);
 
-    const Location *get_most_recent_location() const;
-    const Location *get_previous_location(const Location *location) const;
+    const Location *get_fist_location() const;
+    const Location *get_next_location(const Location *location) const;
 
 private:
     virtual void work_func();

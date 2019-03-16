@@ -9,11 +9,21 @@
 class LocationList
 {
 public:
-    void store_location(const Location &location);
+    LocationList(unsigned locations_to_store);
+    void store_location(int rssi, float snr, const Location &location);
 
-    const Location *get_most_recent_location() const;
-    const Location *get_previous_location(const Location *location) const;
+    const Location *get_fist_location() const;
+    const Location *get_next_location(const Location *location) const;
 
 private:
-    Location _locations[MAX_LOCATIONS_TO_STORE];
+    struct LocationEntry
+    {
+        bool used;
+        int rssi;
+        float snr;
+        Location location;
+    };
+    const unsigned _locations_to_store;
+    unsigned _insertion_index;
+    LocationEntry _locations[MAX_LOCATIONS_TO_STORE];
 };

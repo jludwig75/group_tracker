@@ -22,7 +22,9 @@ public:
                  SoftwareSerial *gps_serial_interface,
                  LoRaInterface &lora_interface,
                  bool use_timer_for_gps,
-                 unsigned transmission_time_sec);
+                 unsigned transmission_time_sec,
+                 unsigned max_peer_locations_to_store,
+                 unsigned max_peer_locations_to_send);
 
     void begin();
 

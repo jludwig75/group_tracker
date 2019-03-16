@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-Worker::Worker(unsigned long max_time_slice_us) :
+Worker::Worker(uint32_t max_time_slice_us) :
     _max_time_slice_us(max_time_slice_us)
 {
 

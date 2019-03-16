@@ -10,7 +10,8 @@ class HwLoRaInterface : public LoRaInterface
 public:
     HwLoRaInterface(LoRaClass & lora);
     virtual int beginPacket(int implicitHeader = false);
-    virtual int endPacket();
+    virtual int endPacket(bool async = false);
+    virtual int terminateAsyncPacket();
 
     virtual int parsePacket(int size = 0);
     virtual int packetRssi();

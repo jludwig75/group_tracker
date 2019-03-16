@@ -9,8 +9,11 @@
 #define GPS_RX_PIN          8
 #define GPS_TX_PIN          9
 #define PPS_INTERRUPT_PIN   2
-#define STATIONS_PER_GROUP  30
-#define TX_TIME_SEC         1
+
+#define STATIONS_PER_GROUP          30
+#define TX_TIME_SEC                 1
+#define PEER_LOCATIONS_TO_STORE     4
+#define MAX_PEER_LOCATIONS_TO_SEND  4
 
 const uint32_t station_id = 0;
 
@@ -24,7 +27,9 @@ GroupLocator locator(station_id,
                      &gps_serial_port,
                      lora,
                      true,
-                     TX_TIME_SEC);
+                     TX_TIME_SEC,
+                     PEER_LOCATIONS_TO_STORE,
+                     MAX_PEER_LOCATIONS_TO_SEND);
 
 void pps_interrupt()
 {
