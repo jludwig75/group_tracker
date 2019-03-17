@@ -10,8 +10,8 @@
 #define LORA_SS_PIN         8
 #define LORA_RESET_PIN      4
 #define LORA_DIO0_PIN       7
-#define GPS_RX_PIN          5
-#define GPS_TX_PIN          6
+#define GPS_RX_PIN          10
+#define GPS_TX_PIN          11
 #define PPS_INTERRUPT_PIN   2
 
 #define STATIONS_PER_GROUP          30
@@ -85,3 +85,4 @@ void loop()
 {
     locator.on_loop();
 }
+

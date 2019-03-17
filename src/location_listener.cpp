@@ -24,7 +24,7 @@ static void discard_excess_rx_data(LoRaInterface & lora_interface, unsigned byte
         if (byte_read < 0 || byte_read > UINT8_MAX)
         {
             // Give up trying to read this and exit.
-            DBG_LOG_ERROR("LL: failed to read excess byte");
+            DBG_LOG_ERROR("LL: failed to read excess byte\n");
             break;
         }
         i++;
@@ -45,8 +45,8 @@ void LocationListener::work_func()
      */
 
     unsigned packet_size = _lora_interface.parsePacket();
-    if (packet_size >= 0) {
-        DBG_LOG_INFO("LL: recevied packet %u bytes", packet_size);
+    if (packet_size > 0) {
+        DBG_LOG_INFO("LL: recevied packet %u bytes\n", packet_size);
         if (packet_size < sizeof(_receive_buffer))
         {
             // Not enough bytes.
@@ -69,7 +69,7 @@ void LocationListener::work_func()
             if (byte_read < 0 || byte_read > UINT8_MAX)
             {
                 // Give up trying to read this and exit.
-                DBG_LOG_ERROR("LL: failed to read available byte");
+                DBG_LOG_ERROR("LL: failed to read available byte\n");
                 return;
             }
             _receive_buffer[i] = (uint8_t)byte_read;
@@ -78,7 +78,7 @@ void LocationListener::work_func()
 
         if (i != sizeof(_receive_buffer))
         {
-            DBG_LOG_ERROR("LL: read too few bytes");
+            DBG_LOG_ERROR("LL: read too few bytes\n");
             return;
         }
 
@@ -92,19 +92,19 @@ void LocationListener::work_func()
         if (!_location.un_pack(_receive_buffer, sizeof(_receive_buffer)))
         {
             // TODO: Log this
-            DBG_LOG_ERROR("LL: received corrupt location");
+            DBG_LOG_ERROR("LL: received corrupt location\n");
             return;
         }
 
         if (_location.get_station_id() != _station_id)
         {
             // Don't store our own location as a peer location.
-            DBG_LOG_INFO("LL: storing peer location");
+            DBG_LOG_INFO("LL: storing peer location\n");
             _peer_locations.store_location(_lora_interface.packetRssi(), _lora_interface.packetSnr(), _location);
         }
         else
         {
-            DBG_LOG_INFO("LL: received own location, skipping");
+            DBG_LOG_INFO("LL: received own location, skipping\n");
         }
         
     }    

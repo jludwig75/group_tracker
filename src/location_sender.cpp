@@ -162,7 +162,7 @@ void LocationSender::send_peer_locations()
             // TODO: This may be a tune point.
             // We may need to do something here to abort the asynch send as above.
             // TODO: Not sure if this is needed after an error.
-            DBG_LOG_ERROR("LS: error sending peer location");
+            DBG_LOG_ERROR("LS: error sending peer location\n");
             abort_async_send();
             return;
         }

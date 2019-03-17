@@ -59,7 +59,7 @@ void LocationTracker::work_func()
         boolean date_and_time_updated = false;
         if (!_gps.parse(_gps.lastNMEA(), &date_and_time_updated))   // this also sets the newNMEAreceived() flag to false
         {
-            DBG_LOG_ERROR("LT: error parsing NMEA");
+            DBG_LOG_ERROR("LT: error parsing NMEA\n");
             return;  // we can fail to parse a sentence in which case we should just wait for the next sentence.
         }
         if (_gps.fix > 0 && date_and_time_updated)
@@ -75,7 +75,7 @@ void LocationTracker::work_func()
             tm.Minute = _gps.minute;
             tm.Second = _gps.seconds;
             time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
-            DBG_LOG_INFO("LT: updated current location");
+            DBG_LOG_INFO("LT: updated current location\n");
             _current_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
         }
     }

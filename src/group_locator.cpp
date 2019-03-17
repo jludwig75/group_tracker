@@ -55,21 +55,21 @@ void GroupLocator::on_pps_interrupt()
         if (_station_id == get_active_station_number(second))
         {
             // We're up. Start sending our packets
-            DBG_LOG_DEBUG("GL: station sending");
+            DBG_LOG_DEBUG("GL: station sending\n");
             _active_worker = SENDER_IDX;
             _location_sender.start_sending_locations(second);
         }
         else
         {
             // Not our turn. Enable listener
-            DBG_LOG_DEBUG("GL station listening");
+            DBG_LOG_DEBUG("GL station listening\n");
             _active_worker = LISTENER_IDX;
         }
         
     }
     else
     {
-        DBG_LOG_DEBUG("GL: PPS time not set");
+        DBG_LOG_DEBUG("GL: PPS time not set\n");
     }
     
 }
