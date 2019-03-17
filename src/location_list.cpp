@@ -42,6 +42,7 @@ LocationList::LocationList(unsigned locations_to_store) :
 
 void LocationList::store_location(int rssi, float snr, const Location &location)
 {
+    // TODO: First see if we've already stored a location for this station and replace it. 
     _locations[_insertion_index].used = true;
     _locations[_insertion_index].rssi = rssi;
     _locations[_insertion_index].snr = snr;
