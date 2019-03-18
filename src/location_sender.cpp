@@ -8,14 +8,12 @@
 #include <stdlib.h>
 
 
-LocationSender::LocationSender(uint32_t station_id,
-                LoRaInterface &lora_interface,
+LocationSender::LocationSender(LoRaInterface &lora_interface,
                 const LocationTracker &location_tracker,
                 const LocationListener &location_listener,
                 unsigned max_locations_to_send,
                 unsigned max_time_slice_us) :
     Worker(750UL * 1000UL),
-    _station_id(station_id),
     _state(IDLE),
     _ops(lora_interface, location_tracker, location_listener, max_locations_to_send)
 {

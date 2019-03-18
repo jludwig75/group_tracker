@@ -17,8 +17,7 @@ class LoRaInterface;
 class LocationSender : public Worker
 {
 public:
-    LocationSender(uint32_t station_id,
-                    LoRaInterface &lora_interface,
+    LocationSender(LoRaInterface &lora_interface,
                     const LocationTracker &location_tracker,
                     const LocationListener &location_listener,
                     unsigned max_locations_to_send,
@@ -37,7 +36,6 @@ private:
         SEND_PEER_LOCATIONS
     };
 
-    uint32_t _station_id;
     volatile SenderState _state;
     LocationSenderOperations _ops;
 };

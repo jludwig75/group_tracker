@@ -21,7 +21,7 @@ GroupLocator::GroupLocator(uint32_t station_id,
     _gps_clock(),
     _location_tracker(station_id, gps_serial_interface, _gps_clock),
     _location_listener(station_id, lora_interface, max_peer_locations_to_store),
-    _location_sender(station_id, lora_interface, _location_tracker, _location_listener, max_peer_locations_to_send, 50000),
+    _location_sender(lora_interface, _location_tracker, _location_listener, max_peer_locations_to_send, 50000),
     _workers()
 {
     _workers[GPS_IDX] = &_location_tracker;
