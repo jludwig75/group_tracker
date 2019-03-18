@@ -15,8 +15,7 @@ int HwLoRaInterface::beginPacket(int implicitHeader)
 }
 int HwLoRaInterface::endPacket(bool async)
 {
-    // TODO: Pass in async after upgrading the library
-    return _lora.endPacket();
+    return _lora.endPacket(async);
 }
 int HwLoRaInterface::terminateAsyncPacket()
 {
