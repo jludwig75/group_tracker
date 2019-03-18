@@ -21,7 +21,6 @@ public:
                  unsigned stations_per_group,
                  SoftwareSerial *gps_serial_interface,
                  LoRaInterface &lora_interface,
-                 bool use_timer_for_gps,
                  unsigned transmission_time_sec,
                  unsigned max_peer_locations_to_store,
                  unsigned max_peer_locations_to_send);
@@ -31,8 +30,6 @@ public:
     void on_pps_interrupt();
 
     void on_loop();
-
-    void on_gps_timer();
 
 private:
     uint32_t get_active_station_number(uint32_t second) const;

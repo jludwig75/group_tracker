@@ -2,23 +2,21 @@
 
 #include "debug_log.h"
 
-#define LISTENER_IDX    0
-#define SENDER_IDX      1
-#define GPS_IDX         2
+#define GPS_IDX         0
+#define LISTENER_IDX    1
+#define SENDER_IDX      2
 
 
 GroupLocator::GroupLocator(uint32_t station_id,
                            unsigned stations_per_group,
                            SoftwareSerial *gps_serial_interface,
                            LoRaInterface &lora_interface,
-                           bool use_timer_for_gps,
                            unsigned transmission_time_sec,
                            unsigned max_peer_locations_to_store,
                            unsigned max_peer_locations_to_send) :
     _station_id(station_id),
     _stations_per_group(stations_per_group),
     _active_worker(LISTENER_IDX),
-    _use_timer_for_gps(use_timer_for_gps),
     _transmission_time_sec(transmission_time_sec),
     _gps_clock(),
     _location_tracker(station_id, gps_serial_interface, _gps_clock),
@@ -26,9 +24,9 @@ GroupLocator::GroupLocator(uint32_t station_id,
     _location_sender(station_id, lora_interface, _location_tracker, _location_listener, max_peer_locations_to_send, 50000),
     _workers()
 {
+    _workers[GPS_IDX] = &_location_tracker;
     _workers[LISTENER_IDX] = &_location_listener;
     _workers[SENDER_IDX] = &_location_sender;
-    _workers[GPS_IDX] = &_location_tracker;
 }
 
 void GroupLocator::begin()
@@ -76,17 +74,6 @@ void GroupLocator::on_pps_interrupt()
 
 void GroupLocator::on_loop()
 {
-    _workers[_active_worker]->do_work();
-    if (!_use_timer_for_gps)
-    {
-        _workers[GPS_IDX]->do_work();
-    }
-}
-
-void GroupLocator::on_gps_timer()
-{
-    // assert _use_timer_for_gps == true
-    // TODO: This ^^^ is unexpected. Log this
-
     _workers[GPS_IDX]->do_work();
+    _workers[_active_worker]->do_work();
 }

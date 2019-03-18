@@ -33,7 +33,6 @@ GroupLocator locator(station_id,
                      STATIONS_PER_GROUP,
                      &gps_serial_port,
                      lora,
-                     true,
                      TX_TIME_SEC,
                      PEER_LOCATIONS_TO_STORE,
                      MAX_PEER_LOCATIONS_TO_SEND);
@@ -44,13 +43,6 @@ void pps_interrupt()
 {
     locator.on_pps_interrupt();
 }
-
-// Interrupt is called once a millisecond, looks for any new GPS data, and stores it
-SIGNAL(TIMER0_COMPA_vect)
-{
-    locator.on_gps_timer();
-}
-
 
 void setup()
 {
@@ -67,12 +59,6 @@ void setup()
     
     // Start the locator
     locator.begin();
-
-    // Start the GPS timer
-    // Timer0 is already used for millis() - we'll just interrupt somewhere
-    // in the middle and call the "Compare A" function above
-    OCR0A = 0xAF;
-    TIMSK0 |= _BV(OCIE0A);
 
     // Setup the PPS interrupt
     pinMode(PPS_INTERRUPT_PIN, INPUT);
