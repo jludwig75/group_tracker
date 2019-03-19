@@ -80,3 +80,13 @@ void GroupLocator::on_loop()
     _workers[GPS_IDX]->do_work();
     _workers[_active_worker]->do_work();
 }
+
+void GroupLocator::set_dummy_location(float latitude, float longitude)
+{
+    _location_tracker.set_dummy_location(latitude, longitude);
+}
+
+void GroupLocator::set_dummy_time(time_t time)
+{
+    _gps_clock.set_gps_time(time);
+}

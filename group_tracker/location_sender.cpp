@@ -3,6 +3,8 @@
 #include "location_tracker.h"
 #include "location_listener.h"
 #include "lora_interface.h"
+
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
 #include "debug_log.h"
 
 #include <stdlib.h>

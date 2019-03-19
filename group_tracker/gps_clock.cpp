@@ -1,5 +1,8 @@
 #include "gps_clock.h"
 
+#include "debug_log.h"
+
+
 GpsClock::GpsClock() :
   _epoch(0),
   _last_time_set(0),
@@ -25,17 +28,18 @@ void GpsClock::set_epoch(uint16_t year)
   _epoch = (uint64_t)makeTime(tm) * 1000000ULL;
 }
 
-uint32_t GpsClock::get_micros() const
+uint64_t GpsClock::get_micros() const
 {
+  
   noInterrupts();
-  uint32_t m = (uint32_t)((uint64_t)_last_time_set * 1000000ULL + (uint64_t)(micros() - _last_micros));
+  uint64_t m = (uint64_t)_last_time_set * 1000000ULL + (micros() - _last_micros);
   interrupts();
   return m;
 }
 
 uint32_t GpsClock::get_millis() const
 {
-  return get_micros() / 1000UL;
+  return (uint32_t)(get_micros() / 1000UL);
 }
 
 // TODO: We could also cache the date and allow updates with just the time. Internal to the time-only update

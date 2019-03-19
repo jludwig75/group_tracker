@@ -22,7 +22,7 @@
 #define PEER_LOCATIONS_TO_STORE     4
 #define MAX_PEER_LOCATIONS_TO_SEND  4
 
-const uint32_t station_id = 4;
+const uint32_t station_id = 8;
 
 #ifndef digitalPinToInterrupt
 #define digitalPinToInterrupt(x)    x
@@ -52,9 +52,17 @@ void pps_interrupt()
 #ifdef  NO_GPS
 Timer t;
 
+void fake_pps()
+{
+    locator.set_dummy_time(millis() / 1000);
+    pps_interrupt();
+}
+
 void setup_no_gps()
 {
-    t.every(1000, pps_interrupt);
+    locator.set_dummy_time(millis() / 1000); // Anything greater than 0
+    locator.set_dummy_location(40.4144428, -111.8307572);
+    t.every(1000, fake_pps);
 }
 #else   // NO_GPS
 void setup_gps()

@@ -31,6 +31,9 @@ public:
 
     void on_loop();
 
+    void set_dummy_location(float latitude, float longitude);
+    void set_dummy_time(time_t time);
+
 private:
     uint32_t get_active_station_number(uint32_t second) const;
 

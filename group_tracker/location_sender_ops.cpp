@@ -2,6 +2,8 @@
 
 #include "location_listener.h"
 #include "location_tracker.h"
+
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
 #include "debug_log.h"
 
 
@@ -68,7 +70,7 @@ LocationSenderOperations::OperationResult LocationSenderOperations::send_peer_lo
         return Advance;
     }
 
-    DBG_LOG_INFO("LS: sending location %u of %u\n", _number_of_locations_sent, _number_of_locations_to_send);
+    DBG_LOG_INFO("LSO: sending location %u of %u\n", _number_of_locations_sent, _number_of_locations_to_send);
 
     LoRaLocationSender::SendLocationResult result = _lora.send_location(&_locations_to_send[_number_of_locations_sent]);
     if (result == LoRaLocationSender::Retry)
@@ -88,6 +90,6 @@ LocationSenderOperations::OperationResult LocationSenderOperations::send_peer_lo
         return Retry;
     }
 
-    DBG_LOG_INFO("LS: sent %u locations\n", _number_of_locations_sent);
+    DBG_LOG_INFO("LSO: sent %u locations\n", _number_of_locations_sent);
     return Advance;
 }
