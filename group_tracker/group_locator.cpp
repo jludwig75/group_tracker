@@ -1,5 +1,6 @@
 #include "group_locator.h"
 
+#define DBG_LOG_LEVEL 3
 #include "debug_log.h"
 
 #define GPS_IDX         0
@@ -76,6 +77,6 @@ void GroupLocator::on_pps_interrupt()
 
 void GroupLocator::on_loop()
 {
-    _workers[GPS_IDX]->do_work();
+    //_workers[GPS_IDX]->do_work();
     _workers[_active_worker]->do_work();
 }

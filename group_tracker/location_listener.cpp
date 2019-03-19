@@ -1,6 +1,8 @@
 #include "location_listener.h"
 
 #include "lora_interface.h"
+
+#define DBG_LOG_LEVEL 3
 #include "debug_log.h"
 
 

@@ -5,6 +5,8 @@
 #include "group_locator.h"
 #include "lora_interface.h"
 #include "hw_lora_interface.h"
+
+#define DBG_LOG_LEVEL 3
 #include "debug_log.h"
 
 #define LORA_SS_PIN         8
