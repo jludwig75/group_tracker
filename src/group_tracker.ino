@@ -19,7 +19,7 @@
 #define PEER_LOCATIONS_TO_STORE     4
 #define MAX_PEER_LOCATIONS_TO_SEND  4
 
-const uint32_t station_id = 0;
+const uint32_t station_id = 4;
 
 #ifndef digitalPinToInterrupt
 #define digitalPinToInterrupt(x)    x
