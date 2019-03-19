@@ -17,6 +17,8 @@ public:
 
     void get_current_location(Location &location) const;
 
+    void set_dummy_location(float latitude, float longitude);
+
 private:
     virtual void work_func();
 

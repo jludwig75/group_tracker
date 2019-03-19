@@ -81,3 +81,9 @@ void LocationTracker::work_func()
         }
     }
 }
+
+void LocationTracker::set_dummy_location(float latitude, float longitude)
+{
+    _current_location = Location(_station_id, _gps_clock.get_time(), 1 * 16 + 2, _gps.longitude, _gps.latitude);
+}
+

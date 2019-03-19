@@ -1,12 +1,13 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <LoRa.h>
+#include <Timer.h>
 
 #include "group_locator.h"
 #include "lora_interface.h"
 #include "hw_lora_interface.h"
 
-#define DBG_LOG_LEVEL 3
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
 #include "debug_log.h"
 
 #define LORA_SS_PIN         8
@@ -46,6 +47,25 @@ void pps_interrupt()
     locator.on_pps_interrupt();
 }
 
+#define NO_GPS
+
+#ifdef  NO_GPS
+Timer t;
+
+void setup_no_gps()
+{
+    t.every(1000, pps_interrupt);
+}
+#else   // NO_GPS
+void setup_gps()
+{
+    // Setup the PPS interrupt
+    pinMode(PPS_INTERRUPT_PIN, INPUT);
+    attachInterrupt(digitalPinToInterrupt(PPS_INTERRUPT_PIN), pps_interrupt, RISING);
+}
+#endif  // NO_GPS
+
+
 void setup()
 {
     Serial.begin(115200);
@@ -58,18 +78,23 @@ void setup()
         Serial.println("Starting LoRa failed!");
         while (1);
     }
-    
+
     // Start the locator
     locator.begin();
 
-    // Setup the PPS interrupt
-    pinMode(PPS_INTERRUPT_PIN, INPUT);
-    attachInterrupt(digitalPinToInterrupt(PPS_INTERRUPT_PIN), pps_interrupt, RISING);
+#ifdef  NO_GPS
+    setup_no_gps();
+#else   // NO_GPS
+    setup_gps();
+#endif  // NO_GPS
 
     DBG_LOG_INFO("Group Locator started\n");
 }
 
 void loop()
 {
+#ifdef  NO_GPS
+    t.update();
+#endif  // NO_GPS
     locator.on_loop();
 }

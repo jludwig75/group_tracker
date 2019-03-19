@@ -2,7 +2,7 @@
 
 #include "lora_interface.h"
 
-#define DBG_LOG_LEVEL 3
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
 #include "debug_log.h"
 
 

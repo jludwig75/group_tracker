@@ -18,6 +18,10 @@ private:
 
 extern DebugLog debug_log;
 
+#define DBG_LOG_LEVEL_ERROR 1
+#define DBG_LOG_LEVEL_INFO  2
+#define DBG_LOG_LEVEL_DEBUG 3
+
 #ifdef  DBG_LOG_LEVEL
 
   #if DBG_LOG_LEVEL > 0
