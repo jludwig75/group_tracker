@@ -46,10 +46,10 @@ void pps_interrupt()
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
     
     DBG_LOG_INFO("Group Locator starting...\n");
-    
+
     // Initialize LORA
     LoRa.setPins(LORA_SS_PIN, LORA_RESET_PIN, LORA_DIO0_PIN);
     if (!LoRa.begin(433E6)) {
@@ -71,4 +71,3 @@ void loop()
 {
     locator.on_loop();
 }
-

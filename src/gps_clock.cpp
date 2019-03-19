@@ -28,7 +28,7 @@ void GpsClock::set_epoch(uint16_t year)
 uint32_t GpsClock::get_micros() const
 {
   noInterrupts();
-  uint32_t m = (uint32_t)(_epoch + _last_time_set * 1000000ULL + (micros() - _last_micros));
+  uint32_t m = (uint32_t)((uint64_t)_last_time_set * 1000000ULL + (uint64_t)(micros() - _last_micros));
   interrupts();
   return m;
 }

@@ -3,7 +3,7 @@
 #include "worker.h"
 
 #include "location.h"
-#include <my_Adafruit_GPS.h>
+#include "my_Adafruit_GPS.h"
 
 class SoftwareSerial;
 class GpsClock;

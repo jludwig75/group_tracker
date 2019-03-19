@@ -23,7 +23,7 @@ void LocationTracker::begin()
     _gps.begin(9600);
     
     // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-    //_gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+    _gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
     // uncomment this line to turn on only the "minimum recommended" data
     //_gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
     // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
@@ -52,31 +52,32 @@ void LocationTracker::get_current_location(Location &location) const
 
 void LocationTracker::work_func()
 {
-    _gps.read();
-
-    if (_gps.newNMEAreceived())
+    while (_gps.read() != 0)
     {
-        boolean date_and_time_updated = false;
-        if (!_gps.parse(_gps.lastNMEA(), &date_and_time_updated))   // this also sets the newNMEAreceived() flag to false
+        if (_gps.newNMEAreceived())
         {
-            DBG_LOG_ERROR("LT: error parsing NMEA\n");
-            return;  // we can fail to parse a sentence in which case we should just wait for the next sentence.
-        }
-        if (_gps.fix > 0 && date_and_time_updated)
-        {
-            _gps_clock.set_gps_time(2000 + _gps.year, _gps.month, _gps.day, _gps.hour, _gps.minute, _gps.seconds);
-            
-            // Get the timestamp from the GPS data.
-            tmElements_t tm;
-            tm.Year = CalendarYrToTm(_gps.year + 2000);
-            tm.Month = _gps.month;
-            tm.Day = _gps.day;
-            tm.Hour = _gps.hour;
-            tm.Minute = _gps.minute;
-            tm.Second = _gps.seconds;
-            time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
-            DBG_LOG_INFO("LT: updated current location\n");
-            _current_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
+            boolean date_and_time_updated = false;
+            if (!_gps.parse(_gps.lastNMEA(), &date_and_time_updated))   // this also sets the newNMEAreceived() flag to false
+            {
+                DBG_LOG_ERROR("LT: error parsing NMEA: %s\n", _gps.lastNMEA());
+                return;  // we can fail to parse a sentence in which case we should just wait for the next sentence.
+            }
+            if (_gps.fix > 0 && date_and_time_updated)
+            {
+                _gps_clock.set_gps_time(2000 + _gps.year, _gps.month, _gps.day, _gps.hour, _gps.minute, _gps.seconds);
+                
+                // Get the timestamp from the GPS data.
+                tmElements_t tm;
+                tm.Year = CalendarYrToTm(_gps.year + 2000);
+                tm.Month = _gps.month;
+                tm.Day = _gps.day;
+                tm.Hour = _gps.hour;
+                tm.Minute = _gps.minute;
+                tm.Second = _gps.seconds;
+                time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
+                DBG_LOG_INFO("LT: updated location\n");
+                _current_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
+            }
         }
     }
 }

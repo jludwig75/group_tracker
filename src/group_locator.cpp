@@ -50,17 +50,19 @@ void GroupLocator::on_pps_interrupt()
     {
         uint32_t second = _gps_clock.get_millis() / 1000;
 
+        //DBG_LOG_INFO("second = %lu, station ID = %lu\n", second, _station_id);
+
         if (_station_id == get_active_station_number(second))
         {
             // We're up. Start sending our packets
-            DBG_LOG_DEBUG("GL: station sending\n");
+            DBG_LOG_DEBUG("GL: sending\n");
             _active_worker = SENDER_IDX;
             _location_sender.start_sending_locations(second);
         }
         else
         {
             // Not our turn. Enable listener
-            DBG_LOG_DEBUG("GL station listening\n");
+            DBG_LOG_DEBUG("GL: listening\n");
             _active_worker = LISTENER_IDX;
         }
         

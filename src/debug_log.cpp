@@ -3,6 +3,9 @@
 
 #include <Print.h>
 
+#ifndef PRINTF_BUF
+#define PRINTF_BUF  80
+#endif  // PRINTF_BUF
 
 DebugLog::DebugLog(Print & printer) :
     _printer(printer)
