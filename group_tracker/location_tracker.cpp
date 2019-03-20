@@ -1,6 +1,8 @@
 #include "location_tracker.h"
 
 #include "gps_clock.h"
+
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
 #include "debug_log.h"
 
 #include <stdlib.h>
@@ -86,4 +88,3 @@ void LocationTracker::set_dummy_location(float latitude, float longitude)
 {
     _current_location = Location(_station_id, _gps_clock.get_time(), 1 * 16 + 2, _gps.longitude, _gps.latitude);
 }
-

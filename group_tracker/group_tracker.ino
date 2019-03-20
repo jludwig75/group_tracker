@@ -47,7 +47,7 @@ void pps_interrupt()
     locator.on_pps_interrupt();
 }
 
-#define NO_GPS
+//#define NO_GPS
 
 #ifdef  NO_GPS
 Timer t;
@@ -76,6 +76,8 @@ void setup_gps()
 
 void setup()
 {
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
     Serial.begin(115200);
     
     DBG_LOG_INFO("Group Locator starting...\n");
@@ -97,6 +99,25 @@ void setup()
 #endif  // NO_GPS
 
     DBG_LOG_INFO("Group Locator started\n");
+    digitalWrite(LED_BUILTIN, LOW);
+
+    delay(1000);
+
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(250);
+    digitalWrite(LED_BUILTIN, LOW);
+
+    delay(250);
+
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(250);
+    digitalWrite(LED_BUILTIN, LOW);
+
+    delay(250);
+
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(250);
+    digitalWrite(LED_BUILTIN, LOW);
 }
 
 void loop()

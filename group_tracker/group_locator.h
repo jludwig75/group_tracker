@@ -42,6 +42,7 @@ private:
     unsigned _active_worker;
     bool _use_timer_for_gps;
     unsigned _transmission_time_sec;
+    bool _enable_communication;
     GpsClock _gps_clock;
     LocationTracker _location_tracker;
     LocationListener _location_listener;

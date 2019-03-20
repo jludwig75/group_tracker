@@ -19,6 +19,7 @@ GroupLocator::GroupLocator(uint32_t station_id,
     _stations_per_group(stations_per_group),
     _active_worker(LISTENER_IDX),
     _transmission_time_sec(transmission_time_sec),
+    _enable_communication(false),
     _gps_clock(),
     _location_tracker(station_id, gps_serial_interface, _gps_clock),
     _location_listener(station_id, lora_interface, max_peer_locations_to_store),
@@ -57,6 +58,7 @@ void GroupLocator::on_pps_interrupt()
         {
             // We're up. Start sending our packets
             DBG_LOG_DEBUG("GL: sending\n");
+            digitalWrite(LED_BUILTIN, HIGH);
             _active_worker = SENDER_IDX;
             _location_sender.start_sending_locations(second);
         }
@@ -64,9 +66,11 @@ void GroupLocator::on_pps_interrupt()
         {
             // Not our turn. Enable listener
             DBG_LOG_DEBUG("GL: listening\n");
+            digitalWrite(LED_BUILTIN, LOW);
             _active_worker = LISTENER_IDX;
         }
         
+        _enable_communication = true;
     }
     else
     {
@@ -78,7 +82,10 @@ void GroupLocator::on_pps_interrupt()
 void GroupLocator::on_loop()
 {
     _workers[GPS_IDX]->do_work();
-    _workers[_active_worker]->do_work();
+    if (_enable_communication)
+    {
+        _workers[_active_worker]->do_work();
+    }
 }
 
 void GroupLocator::set_dummy_location(float latitude, float longitude)
