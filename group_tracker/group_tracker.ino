@@ -22,7 +22,7 @@
 #define PEER_LOCATIONS_TO_STORE     4
 #define MAX_PEER_LOCATIONS_TO_SEND  4
 
-const uint32_t station_id = 8;
+const uint32_t station_id = 3;
 
 #ifndef digitalPinToInterrupt
 #define digitalPinToInterrupt(x)    x
@@ -47,7 +47,7 @@ void pps_interrupt()
     locator.on_pps_interrupt();
 }
 
-//#define NO_GPS
+#define NO_GPS
 
 #ifdef  NO_GPS
 Timer t;
