@@ -4,7 +4,7 @@
 #include "location_listener.h"
 #include "lora_interface.h"
 
-#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
 #include <stdlib.h>
@@ -13,9 +13,7 @@
 LocationSender::LocationSender(LoRaInterface &lora_interface,
                 const LocationTracker &location_tracker,
                 const LocationListener &location_listener,
-                unsigned max_locations_to_send,
-                unsigned max_time_slice_us) :
-    Worker(750UL * 1000UL),
+                unsigned max_locations_to_send) :
     _state(IDLE),
     _ops(lora_interface, location_tracker, location_listener, max_locations_to_send)
 {
@@ -29,13 +27,13 @@ void LocationSender::start_sending_locations(uint32_t second)
     {
         // This is unexpected
         // TODO: This is unexpected. Log this
-        DBG_LOG_ERROR("LS: unexpcted start state %u\n", _state);
+        DBG_LOG_ERROR("LS: unexpcted state %u\n", _state);
     }
 
     _state = SEND_MY_LOCATION;
 }
 
-void LocationSender::work_func()
+void LocationSender::do_work()
 {
     LocationSenderOperations::OperationResult result;
 
@@ -44,7 +42,7 @@ void LocationSender::work_func()
     case IDLE:
         break;
     case SEND_MY_LOCATION:
-        DBG_LOG_INFO("LS: sending my location.\n");
+        DBG_LOG_INFO("LS: sending my loc\n");
         result = _ops.send_my_location();
         if (result == LocationSenderOperations::Advance)
         {
@@ -52,17 +50,17 @@ void LocationSender::work_func()
         }
         else if (result == LocationSenderOperations::Terminate)
         {
-            DBG_LOG_INFO("LS: exiting after sending my location.\n");
+            DBG_LOG_INFO("LS: exit after sending my loc\n");
             _state = IDLE;
         }
         break;
     case SEND_PEER_LOCATIONS:
-        DBG_LOG_INFO("LS: sending peer locations.\n");
+        DBG_LOG_INFO("LS: sending peer locs\n");
         result = _ops.send_peer_locations();
         if (result == LocationSenderOperations::Advance ||
             result == LocationSenderOperations::Terminate)
         {
-            DBG_LOG_INFO("LS: done sending locations.\n");
+            DBG_LOG_INFO("LS: done sending locs\n");
             _state = IDLE;
         }
         break;

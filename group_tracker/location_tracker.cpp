@@ -2,7 +2,7 @@
 
 #include "gps_clock.h"
 
-#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
 #include <stdlib.h>
@@ -10,7 +10,6 @@
 
 
 LocationTracker::LocationTracker(uint32_t station_id, SoftwareSerial *gps_serial_interface, GpsClock &gps_clock) :
-    Worker(),
     _station_id(station_id),
     _gps_serial_interface(gps_serial_interface),
     _gps(gps_serial_interface),
@@ -52,7 +51,7 @@ void LocationTracker::get_current_location(Location &location) const
     interrupts();
 }
 
-void LocationTracker::work_func()
+void LocationTracker::do_work()
 {
     _gps.read();
 
@@ -61,7 +60,7 @@ void LocationTracker::work_func()
         boolean date_and_time_updated = false;
         if (!_gps.parse(_gps.lastNMEA(), &date_and_time_updated))   // this also sets the newNMEAreceived() flag to false
         {
-            DBG_LOG_ERROR("LT: error parsing NMEA: %s\n", _gps.lastNMEA());
+            DBG_LOG_ERROR("LT: parse err: %s\n", _gps.lastNMEA());
             return;  // we can fail to parse a sentence in which case we should just wait for the next sentence.
         }
         if (_gps.fix > 0 && date_and_time_updated)
@@ -77,7 +76,7 @@ void LocationTracker::work_func()
             tm.Minute = _gps.minute;
             tm.Second = _gps.seconds;
             time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
-            DBG_LOG_INFO("LT: updated location\n");
+            DBG_LOG_INFO("LT: updated loc\n");
             _current_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
         }
     }

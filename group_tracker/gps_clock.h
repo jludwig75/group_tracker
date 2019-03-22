@@ -28,4 +28,5 @@ private:
   volatile time_t _last_time_set;
   volatile uint64_t _last_micros;
   volatile time_t _last_gps_time_sec;
+  volatile bool _gps_time_set;
 };

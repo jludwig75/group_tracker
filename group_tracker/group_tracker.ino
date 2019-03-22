@@ -7,7 +7,7 @@
 #include "lora_interface.h"
 #include "hw_lora_interface.h"
 
-#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
 #define LORA_SS_PIN         8
@@ -22,7 +22,7 @@
 #define PEER_LOCATIONS_TO_STORE     4
 #define MAX_PEER_LOCATIONS_TO_SEND  4
 
-const uint32_t station_id = 3;
+#define STATION_ID  3
 
 #ifndef digitalPinToInterrupt
 #define digitalPinToInterrupt(x)    x
@@ -32,7 +32,7 @@ HwLoRaInterface lora(LoRa);
 
 SoftwareSerial gps_serial_port(GPS_RX_PIN, GPS_TX_PIN);
 
-GroupLocator locator(station_id,
+GroupLocator locator(STATION_ID,
                      STATIONS_PER_GROUP,
                      &gps_serial_port,
                      lora,
@@ -85,7 +85,7 @@ void setup()
     // Initialize LORA
     LoRa.setPins(LORA_SS_PIN, LORA_RESET_PIN, LORA_DIO0_PIN);
     if (!LoRa.begin(433E6)) {
-        Serial.println("Starting LoRa failed!");
+        DBG_LOG_ERROR("Starting LoRa failed!");
         while (1);
     }
 

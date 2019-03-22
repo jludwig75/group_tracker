@@ -1,5 +1,7 @@
 #include "gps_clock.h"
 
+#include <util/atomic.h>
+
 #include "debug_log.h"
 
 
@@ -7,7 +9,8 @@ GpsClock::GpsClock() :
   _epoch(0),
   _last_time_set(0),
   _last_micros(0),
-  _last_gps_time_sec(0)
+  _last_gps_time_sec(0),
+  _gps_time_set(false)
 {
 }
 
@@ -59,20 +62,30 @@ void GpsClock::set_gps_time(uint16_t year, uint8_t month, uint8_t day, uint8_t h
   time_t t = makeTime(tm);
   set_gps_time(t);
   set_epoch(year);
+  _gps_time_set = true;
 }
 
 void GpsClock::set_gps_time(time_t t)
 {
-//    Serial.print("Set GPS time "); Serial.println((unsigned long)t);
-  noInterrupts();
-  _last_gps_time_sec = t;
-  interrupts();
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+    _last_gps_time_sec = t;
+  }
 }
 
 void GpsClock::on_pps_pulse()
 {
-  _last_micros = micros();
-  _last_time_set = _last_gps_time_sec + 1;
+  if (_gps_time_set)
+  {
+    // Only re-sync the clock if the GPS time was set
+    // since the last PPS pulse
+    _last_micros = micros();
+    _last_time_set = _last_gps_time_sec + 1;
+    // We've synced the time on the PPS pulse.
+    // Clear the GPS time set flag so we don't
+    // re-synch the time again.
+    _gps_time_set = false;
+  }
 //    Serial.print("Set clock time to "); Serial.println((unsigned long)_last_time_set);
 }
 
@@ -84,9 +97,11 @@ time_t GpsClock::get_time() const
   // the wrap will result in a larger value for the previous time and the
   // subtraction will wrap too. This should stil work, but synchronization would be
   // good to be sure.
-  noInterrupts();
-  time_t t = _last_time_set + (micros() - _last_micros) / 1000000UL;
-  interrupts();
+  time_t t;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+  {
+    t = _last_time_set + (micros() - _last_micros) / 1000000UL;
+  }
   
   return t;
 }

@@ -20,7 +20,7 @@ public:
     const Location *get_next_location(const Location *location) const;
 
 private:
-    virtual void work_func();
+    virtual void do_work();
 
     uint32_t _station_id;
     LoRaInterface &_lora_interface;

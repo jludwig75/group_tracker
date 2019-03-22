@@ -20,7 +20,7 @@ public:
     void set_dummy_location(float latitude, float longitude);
 
 private:
-    virtual void work_func();
+    virtual void do_work();
 
     uint32_t _station_id;
     SoftwareSerial *_gps_serial_interface;

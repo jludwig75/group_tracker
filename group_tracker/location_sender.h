@@ -20,14 +20,13 @@ public:
     LocationSender(LoRaInterface &lora_interface,
                     const LocationTracker &location_tracker,
                     const LocationListener &location_listener,
-                    unsigned max_locations_to_send,
-                    unsigned max_time_slice_us);
+                    unsigned max_locations_to_send);
     
     // Callable from interrupt
     void start_sending_locations(uint32_t second);
 
 private:
-    virtual void work_func();
+    virtual void do_work();
 
     enum SenderState
     {

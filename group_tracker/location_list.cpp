@@ -43,6 +43,25 @@ LocationList::LocationList(unsigned locations_to_store) :
 void LocationList::store_location(int rssi, float snr, const Location &location)
 {
     // TODO: First see if we've already stored a location for this station and replace it. 
+    for (unsigned i = 0; i < _locations_to_store; i++)
+    {
+        if (_locations[i].used && _locations[i].location.get_station_id() == location.get_station_id())
+        {
+            _locations[i].used = true;
+            _locations[i].rssi = rssi;
+            _locations[i].snr = snr;
+            _locations[i].location = location;
+
+            if (_insertion_index == i)
+            {
+                // Advance the insertion index so the next location stored
+                // Doesn't overwrite this one.
+                // TODO: It may get overwtiten later. May be other ways to handle this.
+                _insertion_index = (_insertion_index + 1) % _locations_to_store;
+            }
+        }
+    }
+
     _locations[_insertion_index].used = true;
     _locations[_insertion_index].rssi = rssi;
     _locations[_insertion_index].snr = snr;

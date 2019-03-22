@@ -38,8 +38,8 @@ private:
     uint32_t get_active_station_number(uint32_t second) const;
 
     uint32_t _station_id;
-    unsigned _stations_per_group;
-    unsigned _active_worker;
+    uint8_t _stations_per_group;
+    uint8_t _active_worker;
     bool _use_timer_for_gps;
     unsigned _transmission_time_sec;
     bool _enable_communication;

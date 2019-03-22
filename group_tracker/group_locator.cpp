@@ -1,6 +1,6 @@
 #include "group_locator.h"
 
-#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
 #define GPS_IDX         0
@@ -23,7 +23,7 @@ GroupLocator::GroupLocator(uint32_t station_id,
     _gps_clock(),
     _location_tracker(station_id, gps_serial_interface, _gps_clock),
     _location_listener(station_id, lora_interface, max_peer_locations_to_store),
-    _location_sender(lora_interface, _location_tracker, _location_listener, max_peer_locations_to_send, 50000),
+    _location_sender(lora_interface, _location_tracker, _location_listener, max_peer_locations_to_send),
     _workers()
 {
     _workers[GPS_IDX] = &_location_tracker;
@@ -52,7 +52,7 @@ void GroupLocator::on_pps_interrupt()
     {
         uint32_t second = _gps_clock.get_millis() / 1000;
 
-        //DBG_LOG_INFO("second = %lu, station ID = %lu\n", second, _station_id);
+        DBG_LOG_DEBUG("active station = %lu, station ID = %lu\n", get_active_station_number(second), _station_id);
 
         if (_station_id == get_active_station_number(second))
         {
