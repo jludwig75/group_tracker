@@ -5,6 +5,55 @@
 #include <gmock-global/gmock-global.h>
 
 
+#include "debug_log.h"
+#include <stdarg.h>
+
+class Print {
+    int dummy;
+} dummy;
+
+DebugLog debug_log(dummy);
+
+DebugLog::DebugLog(Print & printer) :
+    _printer(printer)
+{
+}
+
+void DebugLog::info(const char *format, ...)
+{
+    va_list al;
+
+    va_start(al, format);
+
+    vprintf(format, al);
+
+    va_end(al);
+}
+
+void DebugLog::debug(const char *format, ...)
+{
+    va_list al;
+    
+    va_start(al, format);
+
+    vprintf(format, al);
+
+    va_end(al);
+}
+
+void DebugLog::error(const char *format, ...)
+{
+    va_list al;
+    
+    va_start(al, format);
+
+    vprintf(format, al);
+
+    va_end(al);
+}
+
+
+
 class Location_Test : public GlobalMockTest
 {
     virtual void SetUp()
@@ -19,12 +68,12 @@ class Location_Test : public GlobalMockTest
 
 };
 
-TEST_F(Location_Test, Location_store_and_retrieve_timestamp)
+TEST_F(Location_Test, Location_pack_and_unpack)
 {
     uint32_t station_id = 17;
     uint32_t timestamp = 5435437;
     uint8_t accuracy = 47;
-    float longitude = -110.08;
+    float longitude = -179.9999;
     float latitude = 41.67;
     Location location(station_id, timestamp, accuracy, longitude, latitude);
 
@@ -43,5 +92,7 @@ TEST_F(Location_Test, Location_store_and_retrieve_timestamp)
     ASSERT_EQ(station_id, location2.get_station_id());
     ASSERT_EQ(2 * (timestamp / 2), location2.get_timestamp());
     ASSERT_EQ(accuracy, location2.get_accuracy());
-    printf("%f, %f\n", location2.get_longitude(), location2.get_latitude());
+
+    ASSERT_TRUE(fabs(longitude - location2.get_longitude()) < 0.0005);
+    ASSERT_TRUE(fabs(latitude - location2.get_latitude()) < 0.0005);
 }

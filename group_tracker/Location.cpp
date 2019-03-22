@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_OFF
+#include "debug_log.h"
 
 #define SECONDS_PER_TS_UINT 2
 
@@ -22,30 +24,48 @@ struct LocationBlob
 
 static_assert(sizeof(LocationBlob) == LOCATION_BLOB_BYES, "\"LocationBlob\" data structure size not as expected");
 
-#define COORD_MIN   -180UL
-#define COORD_MAX    180UL
-#define ACCURACY_MULTIPLIER 100000UL
+#define COORD_MIN   -180L
+#define COORD_MAX    180L
+#define ACCURACY_MULTIPLIER 100000L
+
+static int64_t map64(int64_t x, int64_t in_min, int64_t in_max, int64_t out_min, int64_t out_max)
+{
+    int64_t ret = (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    DBG_LOG_DEBUG("x=%d, in_min=%d, in_max=%d, out_min=%d, out_max=%d, ret=%d\n", x, in_min, in_max, out_min, out_max, ret);
+    return ret;
+}
+
 
 static uint32_t map_coord_to_blob_space(float coord)
 {
-    uint32_t _coord = (coord * ACCURACY_MULTIPLIER);
+    float coord2 = coord * ACCURACY_MULTIPLIER;
+    int32_t _coord = (int32_t)coord2;
 
-    return map(_coord,
+
+    uint32_t blob_value = map64(_coord,
                 COORD_MIN * ACCURACY_MULTIPLIER,
                 COORD_MAX * ACCURACY_MULTIPLIER,
                 0,
                 (1UL << 24) - 1);
+
+    DBG_LOG_DEBUG("%s: ACCURACY_MULTIPLIER = %d, coord=%f, coord2=%f, _coord = %d, blob_value = %lu\n", __func__, ACCURACY_MULTIPLIER, coord, coord2, _coord, blob_value);
+
+    return blob_value;
 }
 
 static float map_blob_value_to_coord_space(uint32_t blob_value)
 {
-    uint32_t _coord = map(blob_value,
+    int32_t _coord = map64(blob_value,
                             0,
-                            (1UL >> 24) - 1,
+                            (1L << 24) - 1,
                             COORD_MIN * ACCURACY_MULTIPLIER,
                             COORD_MAX * ACCURACY_MULTIPLIER);
 
-    return ((float)_coord) / ACCURACY_MULTIPLIER;
+    float coord = ((float)_coord) / ACCURACY_MULTIPLIER; 
+
+    DBG_LOG_DEBUG("%s: blob_value = %u, _coord = %d, coord = %f\n", __func__, blob_value, _coord, coord);
+
+    return coord;
 }
 
 
