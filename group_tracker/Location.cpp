@@ -110,7 +110,7 @@ uint8_t Location::get_accuracy() const
     return _accuracy;
 }
 
-float Location::get_logitude() const
+float Location::get_longitude() const
 {
     return _longitude;
 }

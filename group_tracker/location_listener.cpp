@@ -100,7 +100,7 @@ void LocationListener::do_work()
         if (_location.get_station_id() != _station_id)
         {
             // Don't store our own location as a peer location.
-            DBG_LOG_INFO("LL: storing loc %u:(%f, %f)\n", _location.get_station_id(), _location.get_latitude(), _location.get_logitude());
+            DBG_LOG_INFO("LL: storing loc %u:(%f, %f)\n", _location.get_station_id(), _location.get_latitude(), _location.get_longitude());
             _peer_locations.store_location(_lora_interface.packetRssi(), _lora_interface.packetSnr(), _location);
         }
         else

@@ -16,7 +16,7 @@ public:
     uint32_t get_timestamp() const;
     uint8_t get_hop_count() const;
     uint8_t get_accuracy() const;
-    float get_logitude() const;
+    float get_longitude() const;
     float get_latitude() const;
 
     bool un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes);
