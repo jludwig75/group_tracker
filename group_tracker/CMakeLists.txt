@@ -5,8 +5,20 @@ include_directories(${REPO_ROOT_DIR}/gmock-global/include/)
 include_directories(${REPO_ROOT_DIR}/platform/include)
 include_directories(${REPO_ROOT_DIR}/platform/libraries/include)
 
+
 set(UNIT_TEST_NAME location_unittest)
 cxx_executable(${UNIT_TEST_NAME} test gmock_main location.cpp)
+add_custom_command(
+     TARGET ${UNIT_TEST_NAME}
+     COMMENT "${UNIT_TEST_NAME} uint tests"
+     POST_BUILD 
+     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+     COMMAND ${UNIT_TEST_NAME}
+)
+
+
+set(UNIT_TEST_NAME lora_location_sender_unittest)
+cxx_executable(${UNIT_TEST_NAME} test gmock_main lora_location_sender.cpp location.cpp test/mocks/lora_interface_mock.cpp)
 add_custom_command(
      TARGET ${UNIT_TEST_NAME}
      COMMENT "${UNIT_TEST_NAME} uint tests"

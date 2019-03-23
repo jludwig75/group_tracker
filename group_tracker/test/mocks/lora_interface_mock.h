@@ -3,12 +3,10 @@
 #include "lora_interface.h"
 
 
-class LoRaClass;
-
-class HwLoRaInterface : public LoRaInterface
+class LoRaInterfaceMock : public LoRaInterface
 {
 public:
-    HwLoRaInterface(LoRaClass & lora);
+    LoRaInterfaceMock(unsigned retries_before_available_to_send);
     virtual int beginPacket(int implicitHeader = false);
     virtual int endPacket(bool async = false);
 
@@ -27,5 +25,6 @@ public:
     virtual int peek();
     virtual void flush();
 private:
-    LoRaClass & _lora;
+    bool _retries_before_available_to_send;
+    unsigned _send_attempts;
 };

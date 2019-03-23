@@ -17,11 +17,6 @@ int HwLoRaInterface::endPacket(bool async)
 {
     return _lora.endPacket(async);
 }
-int HwLoRaInterface::terminateAsyncPacket()
-{
-    // TODO: Implemet this if needed.
-    return 0;
-}
 
 int HwLoRaInterface::parsePacket(int size)
 {

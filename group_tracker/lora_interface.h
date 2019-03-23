@@ -9,7 +9,6 @@ public:
     virtual ~LoRaInterface() {}
     virtual int beginPacket(int implicitHeader = false) = 0;
     virtual int endPacket(bool async = false) = 0;
-    virtual int terminateAsyncPacket() = 0;
 
     virtual int parsePacket(int size = 0) = 0;
     virtual int packetRssi() = 0;

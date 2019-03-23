@@ -23,9 +23,15 @@ LoRaLocationSender::SendLocationResult LoRaLocationSender::send_location(const L
         return Retry;
     }
 
-    _lora_interface.write(location_blob, LOCATION_BLOB_BYES);
+    if (_lora_interface.write(location_blob, LOCATION_BLOB_BYES) != sizeof(location_blob))
+    {
+        return Error;
+    }
     // TODO: Check for errors
-    _lora_interface.endPacket(true);    // async); TODO: I don't have the latest version of the library.
+    if (_lora_interface.endPacket(true) != 0)
+    {
+        return Error;
+    }
     // TODO: Check for errors
 
     return Success;
