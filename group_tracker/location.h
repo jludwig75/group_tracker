@@ -5,12 +5,16 @@
 
 #define LOCATION_BLOB_BYES  16
 
+#define MAX_HOP_COUNT       32
+
 
 class Location
 {
 public:
     Location(uint32_t station_id, uint32_t timestamp, uint8_t accuracy, float longitude, float latitude);
     Location();
+
+    bool validate() const;
 
     uint32_t get_station_id() const;
     uint32_t get_timestamp() const;

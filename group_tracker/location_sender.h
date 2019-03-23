@@ -11,16 +11,12 @@ class LocationListener;
 class LoRaInterface;
 
 
-#define MAX_LOCATIONS_TO_SEND   8
-
-
 class LocationSender : public Worker
 {
 public:
     LocationSender(LoRaInterface &lora_interface,
                     const LocationTracker &location_tracker,
-                    const LocationListener &location_listener,
-                    unsigned max_locations_to_send);
+                    const LocationListener &location_listener);
     
     // Callable from interrupt
     void start_sending_locations(uint32_t second);

@@ -89,6 +89,22 @@ Location::Location() :
 {
 }
 
+bool Location::validate() const
+{
+    if (_hop_count > MAX_HOP_COUNT)
+    {
+        return false;
+    }
+
+    if (_longitude < -90 || _longitude > 90 || _latitude < -180 || _latitude > 180)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+
 bool Location::un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes)
 {
     if (blob_buffer == NULL || buffer_bytes < LOCATION_BLOB_BYES)

@@ -19,8 +19,6 @@
 
 #define STATIONS_PER_GROUP          30
 #define TX_TIME_SEC                 1
-#define PEER_LOCATIONS_TO_STORE     4
-#define MAX_PEER_LOCATIONS_TO_SEND  4
 
 #define STATION_ID  3
 
@@ -36,9 +34,7 @@ GroupLocator locator(STATION_ID,
                      STATIONS_PER_GROUP,
                      &gps_serial_port,
                      lora,
-                     TX_TIME_SEC,
-                     PEER_LOCATIONS_TO_STORE,
-                     MAX_PEER_LOCATIONS_TO_SEND);
+                     TX_TIME_SEC);
 
 DebugLog debug_log(Serial);
 
@@ -101,23 +97,16 @@ void setup()
     DBG_LOG_INFO("Group Locator started\n");
     digitalWrite(LED_BUILTIN, LOW);
 
-    delay(1000);
+    delay(750);
 
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(250);
-    digitalWrite(LED_BUILTIN, LOW);
+    for (uint8_t i = 0; i < 3; i++)
+    {
+        delay(250);
 
-    delay(250);
-
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(250);
-    digitalWrite(LED_BUILTIN, LOW);
-
-    delay(250);
-
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(250);
-    digitalWrite(LED_BUILTIN, LOW);
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(250);
+        digitalWrite(LED_BUILTIN, LOW);
+    }
 }
 
 void loop()

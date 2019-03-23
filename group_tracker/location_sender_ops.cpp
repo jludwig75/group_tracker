@@ -3,18 +3,16 @@
 #include "location_listener.h"
 #include "location_tracker.h"
 
-//#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_OFF
 #include "debug_log.h"
 
 
 LocationSenderOperations::LocationSenderOperations(LoRaInterface & lora_interface,
                                                    const LocationTracker &location_tracker,
-                                                   const LocationListener &location_listener,
-                                                   unsigned max_locations_to_send) :
+                                                   const LocationListener &location_listener) :
     _lora(lora_interface),
     _location_tracker(location_tracker),
     _location_listener(location_listener),
-    _max_locations_to_send(max_locations_to_send),
     _locations_to_send(),
     _number_of_locations_to_send(0),
     _number_of_locations_sent(0)
@@ -53,7 +51,7 @@ void LocationSenderOperations::copy_locations_to_send()
     _number_of_locations_sent = 0;
 
     for(const Location *location = _location_listener.get_fist_location();
-        location != NULL && _number_of_locations_to_send < _max_locations_to_send;
+        location != NULL && _number_of_locations_to_send < MAX_LOCATIONS_TO_SEND;
         location = _location_listener.get_next_location(location))
     {
         _locations_to_send[_number_of_locations_to_send] = *location;

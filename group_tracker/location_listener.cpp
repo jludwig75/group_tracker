@@ -2,21 +2,21 @@
 
 #include "lora_interface.h"
 
-#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_DEBUG
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
 
 
-LocationListener::LocationListener(uint32_t station_id, LoRaInterface &lora_interface, unsigned max_peer_locations_to_store) :
+LocationListener::LocationListener(uint32_t station_id, LoRaInterface &lora_interface) :
     _station_id(station_id),
     _lora_interface(lora_interface),
-    _peer_locations(max_peer_locations_to_store)
+    _peer_locations()
 {
 }
 
 static void discard_excess_rx_data(LoRaInterface & lora_interface, unsigned bytes_to_clear)
 {
-    unsigned i = 0;
+    uint8_t i = 0;
 
     DBG_LOG_ERROR("LL: clearing %u excess bytes\n", bytes_to_clear);
 

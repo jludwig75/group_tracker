@@ -3,13 +3,13 @@
 #include "location.h"
 
 
-#define MAX_LOCATIONS_TO_STORE  8
+#define MAX_LOCATIONS_TO_STORE  4
 
 
 class LocationList
 {
 public:
-    LocationList(unsigned locations_to_store);
+    LocationList();
     void store_location(int rssi, float snr, const Location &location);
 
     const Location *get_fist_location() const;
@@ -23,7 +23,6 @@ private:
         float snr;
         Location location;
     };
-    const unsigned _locations_to_store;
-    unsigned _insertion_index;
+    uint8_t _insertion_index;
     LocationEntry _locations[MAX_LOCATIONS_TO_STORE];
 };

@@ -27,12 +27,11 @@ LoRaLocationSender::SendLocationResult LoRaLocationSender::send_location(const L
     {
         return Error;
     }
-    // TODO: Check for errors
+
     if (_lora_interface.endPacket(true) != 0)
     {
         return Error;
     }
-    // TODO: Check for errors
 
     return Success;
 }

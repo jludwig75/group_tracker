@@ -28,13 +28,12 @@
  * fragmented.
  */
 
-LocationList::LocationList(unsigned locations_to_store) :
-    _locations_to_store(locations_to_store),
+LocationList::LocationList() :
     _insertion_index(0)
 {
     // assert locations_to_store <= MAX_LOCATIONS_TO_STORE
 
-    for (unsigned i = 0; i < MAX_LOCATIONS_TO_STORE; i++)
+    for (uint8_t i = 0; i < MAX_LOCATIONS_TO_STORE; i++)
     {
         _locations[i].used = false;
     }
@@ -43,7 +42,7 @@ LocationList::LocationList(unsigned locations_to_store) :
 void LocationList::store_location(int rssi, float snr, const Location &location)
 {
     // TODO: First see if we've already stored a location for this station and replace it. 
-    for (unsigned i = 0; i < _locations_to_store; i++)
+    for (uint8_t i = 0; i < MAX_LOCATIONS_TO_STORE; i++)
     {
         if (_locations[i].used && _locations[i].location.get_station_id() == location.get_station_id())
         {
@@ -57,7 +56,7 @@ void LocationList::store_location(int rssi, float snr, const Location &location)
                 // Advance the insertion index so the next location stored
                 // Doesn't overwrite this one.
                 // TODO: It may get overwtiten later. May be other ways to handle this.
-                _insertion_index = (_insertion_index + 1) % _locations_to_store;
+                _insertion_index = (_insertion_index + 1) % MAX_LOCATIONS_TO_STORE;
             }
         }
     }
@@ -67,13 +66,13 @@ void LocationList::store_location(int rssi, float snr, const Location &location)
     _locations[_insertion_index].snr = snr;
     _locations[_insertion_index].location = location;
 
-    _insertion_index = (_insertion_index + 1) % _locations_to_store;
+    _insertion_index = (_insertion_index + 1) % MAX_LOCATIONS_TO_STORE;
 }
 
 // These handle fragmentation, but not starting at any location but the beginning.
 const Location *LocationList::get_fist_location() const
 {
-    for(unsigned i = 0; i < _locations_to_store; i++)
+    for(uint8_t i = 0; i < MAX_LOCATIONS_TO_STORE; i++)
     {
         if (_locations[i].used)
         {
@@ -86,7 +85,7 @@ const Location *LocationList::get_fist_location() const
 // These handle fragmentation, but not starting at any location but the beginning.
 const Location *LocationList::get_next_location(const Location *location) const
 {
-    if (location < &_locations[0].location || location >= &_locations[_locations_to_store].location)
+    if (location < &_locations[0].location || location >= &_locations[MAX_LOCATIONS_TO_STORE].location)
     {
         return NULL;
     }
@@ -95,8 +94,8 @@ const Location *LocationList::get_next_location(const Location *location) const
     // we need to keep track of the index we started enumerating
     // at, if we do ever start in the middle, because of how implement
     // location priority.
-    unsigned i = (location - &_locations[0].location) + 1;
-    for(; i < _locations_to_store; i++)
+    uint8_t i = (location - &_locations[0].location) + 1;
+    for(; i < MAX_LOCATIONS_TO_STORE; i++)
     {
         if (_locations[i].used)
         {

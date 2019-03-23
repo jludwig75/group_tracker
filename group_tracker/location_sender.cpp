@@ -12,10 +12,9 @@
 
 LocationSender::LocationSender(LoRaInterface &lora_interface,
                 const LocationTracker &location_tracker,
-                const LocationListener &location_listener,
-                unsigned max_locations_to_send) :
+                const LocationListener &location_listener) :
     _state(IDLE),
-    _ops(lora_interface, location_tracker, location_listener, max_locations_to_send)
+    _ops(lora_interface, location_tracker, location_listener)
 {
 }
 

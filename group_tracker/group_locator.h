@@ -21,9 +21,7 @@ public:
                  unsigned stations_per_group,
                  SoftwareSerial *gps_serial_interface,
                  LoRaInterface &lora_interface,
-                 unsigned transmission_time_sec,
-                 unsigned max_peer_locations_to_store,
-                 unsigned max_peer_locations_to_send);
+                 unsigned transmission_time_sec);
 
     void begin();
 

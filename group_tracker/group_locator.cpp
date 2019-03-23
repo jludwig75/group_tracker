@@ -12,9 +12,7 @@ GroupLocator::GroupLocator(uint32_t station_id,
                            unsigned stations_per_group,
                            SoftwareSerial *gps_serial_interface,
                            LoRaInterface &lora_interface,
-                           unsigned transmission_time_sec,
-                           unsigned max_peer_locations_to_store,
-                           unsigned max_peer_locations_to_send) :
+                           unsigned transmission_time_sec) :
     _station_id(station_id),
     _stations_per_group(stations_per_group),
     _active_worker(LISTENER_IDX),
@@ -22,8 +20,8 @@ GroupLocator::GroupLocator(uint32_t station_id,
     _enable_communication(false),
     _gps_clock(),
     _location_tracker(station_id, gps_serial_interface, _gps_clock),
-    _location_listener(station_id, lora_interface, max_peer_locations_to_store),
-    _location_sender(lora_interface, _location_tracker, _location_listener, max_peer_locations_to_send),
+    _location_listener(station_id, lora_interface),
+    _location_sender(lora_interface, _location_tracker, _location_listener),
     _workers()
 {
     _workers[GPS_IDX] = &_location_tracker;

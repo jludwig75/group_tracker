@@ -2,5 +2,5 @@
 
 #include <stdint.h>
 
-typedef uint32_t time_t;
+//typedef uint32_t time_t;
 
