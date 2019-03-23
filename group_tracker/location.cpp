@@ -105,6 +105,20 @@ bool Location::validate() const
 }
 
 
+static float sanitize_coord(float coord, uint8_t coord_max)
+{
+    if (fabs(coord) > coord_max)
+    {
+        float diff = fabs(coord) - coord_max;
+        if (diff < (float)10 / ACCURACY_MULTIPLIER)
+        {
+            coord = coord < 0 ? -coord_max : coord_max;
+        }
+    }
+
+    return coord;
+}
+
 bool Location::un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes)
 {
     if (blob_buffer == NULL || buffer_bytes < LOCATION_BLOB_BYES)
@@ -120,8 +134,8 @@ bool Location::un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes)
     _timestamp = blob->timestamp * SECONDS_PER_TS_UINT; // TODO: Add year start
     _accuracy = blob->accuracy;
     _hop_count = blob->hop_count;
-    _latitude = map_blob_value_to_coord_space(((uint32_t)blob->latitude_hi) << 16 | (uint32_t)blob->latitude_lo);
-    _longitude = map_blob_value_to_coord_space(blob->longitude);
+    _latitude = sanitize_coord(map_blob_value_to_coord_space(((uint32_t)blob->latitude_hi) << 16 | (uint32_t)blob->latitude_lo), 90);
+    _longitude = sanitize_coord(map_blob_value_to_coord_space(blob->longitude), 180);
 
     return validate();
 }

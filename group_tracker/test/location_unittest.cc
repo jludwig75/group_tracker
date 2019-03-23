@@ -192,12 +192,35 @@ TEST(Location_Test, Can_pack_and_un_pack_location_at_coord_extreems)
     Location location;
     Location location2;
 
-    longitude = -179.9999;
+    longitude = -180;
     latitude = -90;
     location = Location(station_id, timestamp, accuracy, longitude, latitude);
     ASSERT_TRUE(location.pack(pack_buffer, sizeof(pack_buffer)));
-    //ASSERT_TRUE(location2.un_pack(pack_buffer, sizeof(pack_buffer)));
-    //ASSERT_TRUE(fabs(longitude - location2.get_longitude()) < 0.0005);
-    //ASSERT_TRUE(fabs(latitude - location2.get_latitude()) < 0.0005);
+    ASSERT_TRUE(location2.un_pack(pack_buffer, sizeof(pack_buffer)));
+    ASSERT_TRUE(fabs(longitude - location2.get_longitude()) < 0.0005);
+    ASSERT_TRUE(fabs(latitude - location2.get_latitude()) < 0.0005);
 
+    longitude = 180;
+    latitude = -90;
+    location = Location(station_id, timestamp, accuracy, longitude, latitude);
+    ASSERT_TRUE(location.pack(pack_buffer, sizeof(pack_buffer)));
+    ASSERT_TRUE(location2.un_pack(pack_buffer, sizeof(pack_buffer)));
+    ASSERT_TRUE(fabs(longitude - location2.get_longitude()) < 0.0005);
+    ASSERT_TRUE(fabs(latitude - location2.get_latitude()) < 0.0005);
+
+    longitude = 180;
+    latitude = 90;
+    location = Location(station_id, timestamp, accuracy, longitude, latitude);
+    ASSERT_TRUE(location.pack(pack_buffer, sizeof(pack_buffer)));
+    ASSERT_TRUE(location2.un_pack(pack_buffer, sizeof(pack_buffer)));
+    ASSERT_TRUE(fabs(longitude - location2.get_longitude()) < 0.0005);
+    ASSERT_TRUE(fabs(latitude - location2.get_latitude()) < 0.0005);
+
+    longitude = 180;
+    latitude = 90;
+    location = Location(station_id, timestamp, accuracy, longitude, latitude);
+    ASSERT_TRUE(location.pack(pack_buffer, sizeof(pack_buffer)));
+    ASSERT_TRUE(location2.un_pack(pack_buffer, sizeof(pack_buffer)));
+    ASSERT_TRUE(fabs(longitude - location2.get_longitude()) < 0.0005);
+    ASSERT_TRUE(fabs(latitude - location2.get_latitude()) < 0.0005);
 }
