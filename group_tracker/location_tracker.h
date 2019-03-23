@@ -27,4 +27,7 @@ private:
     Adafruit_GPS _gps;
     GpsClock &_gps_clock;
     Location _current_location;
+
+    // Keep off of stack
+    Location _gps_location;
 };

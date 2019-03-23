@@ -28,9 +28,9 @@ static_assert(sizeof(LocationBlob) == LOCATION_BLOB_BYES, "\"LocationBlob\" data
 #define COORD_MAX    180L
 #define ACCURACY_MULTIPLIER 100000L
 
-static int64_t map64(int64_t x, int64_t in_min, int64_t in_max, int64_t out_min, int64_t out_max)
+static int32_t map32(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max)
 {
-    int64_t ret = (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    int32_t ret = (int32_t)((int64_t)(x - in_min) * (int64_t)(out_max - out_min) / (int64_t)(in_max - in_min) + (int64_t)out_min);
     DBG_LOG_DEBUG("x=%d, in_min=%d, in_max=%d, out_min=%d, out_max=%d, ret=%d\n", x, in_min, in_max, out_min, out_max, ret);
     return ret;
 }
@@ -42,7 +42,7 @@ static uint32_t map_coord_to_blob_space(float coord)
     int32_t _coord = (int32_t)coord2;
 
 
-    uint32_t blob_value = map64(_coord,
+    uint32_t blob_value = map32(_coord,
                 COORD_MIN * ACCURACY_MULTIPLIER,
                 COORD_MAX * ACCURACY_MULTIPLIER,
                 0,
@@ -55,7 +55,7 @@ static uint32_t map_coord_to_blob_space(float coord)
 
 static float map_blob_value_to_coord_space(uint32_t blob_value)
 {
-    int32_t _coord = map64(blob_value,
+    int32_t _coord = map32(blob_value,
                             0,
                             (1L << 24) - 1,
                             COORD_MIN * ACCURACY_MULTIPLIER,
@@ -96,7 +96,7 @@ bool Location::validate() const
         return false;
     }
 
-    if (_longitude < -90 || _longitude > 90 || _latitude < -180 || _latitude > 180)
+    if (_latitude < -90 || _latitude > 90 || _longitude < -180 || _longitude > 180)
     {
         return false;
     }
@@ -123,7 +123,7 @@ bool Location::un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes)
     _latitude = map_blob_value_to_coord_space(((uint32_t)blob->latitude_hi) << 16 | (uint32_t)blob->latitude_lo);
     _longitude = map_blob_value_to_coord_space(blob->longitude);
 
-    return true;
+    return validate();
 }
 
 uint32_t Location::get_station_id() const
@@ -164,14 +164,17 @@ void Location::increment_hop_count()
 
 bool Location::pack(uint8_t *blob_buffer, unsigned buffer_bytes) const
 {
-    LocationBlob *blob;
+    if (!blob_buffer || !validate())
+    {
+        return false;
+    }
+
+    LocationBlob *blob = (LocationBlob *)blob_buffer;
 
     if (buffer_bytes < sizeof(*blob))
     {
         return false;
     }
-
-    blob = (LocationBlob *)blob_buffer;
 
     blob->station_id = _station_id;
     blob->accuracy = _accuracy;

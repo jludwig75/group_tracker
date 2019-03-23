@@ -77,7 +77,15 @@ void LocationTracker::do_work()
             tm.Second = _gps.seconds;
             time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
             DBG_LOG_INFO("LT: updated loc\n");
-            _current_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
+            _gps_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
+            if (_gps_location.validate())
+            {
+                _current_location = _gps_location;
+            }
+            else
+            {
+                DBG_LOG_ERROR("LT: Invalid GPS loc\n");
+            }
         }
     }
 }

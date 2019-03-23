@@ -28,7 +28,7 @@ LoRaLocationSender::SendLocationResult LoRaLocationSender::send_location(const L
         return Error;
     }
 
-    if (_lora_interface.endPacket(true) != 0)
+    if (_lora_interface.endPacket(true) != 1)
     {
         return Error;
     }

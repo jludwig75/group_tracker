@@ -1,9 +1,17 @@
 #include "lora_interface_mock.h"
 
 
-LoRaInterfaceMock::LoRaInterfaceMock(unsigned retries_before_available_to_send) :
+LoRaInterfaceMock::LoRaInterfaceMock(unsigned retries_before_available_to_send,
+                        bool fail_write,
+                        bool fail_end_packet,
+                        bool fail_read) :
     _retries_before_available_to_send(retries_before_available_to_send),
-    _send_attempts(0)
+    _send_attempts(0),
+    _fail_write(fail_write),
+    _fail_end_packet(fail_end_packet),
+    _fail_read(fail_read),
+    _num_bytes_written(0),
+    _num_bytes_read(0)
 {
 
 }
@@ -17,12 +25,12 @@ int LoRaInterfaceMock::beginPacket(int implicitHeader)
     }
     
     _send_attempts--;
-    return 16; // TODO: hook this up to some configuration
+    return 1;
 }
 
 int LoRaInterfaceMock::endPacket(bool async)
 {
-    return 0;
+    return _fail_end_packet ? 0 : 1;
 }
 
 int LoRaInterfaceMock::parsePacket(int size)
@@ -49,6 +57,12 @@ unsigned LoRaInterfaceMock::write(uint8_t byte)
 }
 unsigned LoRaInterfaceMock::write(const uint8_t *buffer, unsigned size)
 {
+    if (_fail_write)
+    {
+        return 0;
+    }
+
+    _num_bytes_written += size;
     return size;
 }
 
@@ -59,6 +73,13 @@ int LoRaInterfaceMock::available()
 }
 int LoRaInterfaceMock::read()
 {
+    // TODO: Do somethin here like pre-loading bytes to read.
+    if (_fail_read)
+    {
+        return 0;
+    }
+
+    _num_bytes_read += 0;
     return 0;
 }
 int LoRaInterfaceMock::peek()
@@ -67,4 +88,14 @@ int LoRaInterfaceMock::peek()
 }
 void LoRaInterfaceMock::flush()
 {
+}
+
+unsigned LoRaInterfaceMock::get_num_bytes_written() const
+{
+    return _num_bytes_written;
+}
+
+unsigned LoRaInterfaceMock::get_num_bytes_read() const
+{
+    return _num_bytes_read;
 }
