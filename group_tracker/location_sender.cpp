@@ -24,8 +24,6 @@ void LocationSender::start_sending_locations(uint32_t second)
     // Don't do anything here, just transition the state.
     if (_state != IDLE)
     {
-        // This is unexpected
-        // TODO: This is unexpected. Log this
         DBG_LOG_ERROR("LS: unexpcted state %u\n", _state);
     }
 
