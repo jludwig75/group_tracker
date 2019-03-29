@@ -59,25 +59,31 @@ void GroupLocator::on_pps_interrupt()
 
         if (_station_id == get_active_station_number(second))
         {
-            // We're up. Start sending our packets
-            DBG_LOG_DEBUG("GL: sending\n");
-            digitalWrite(LED_BUILTIN, HIGH);
-            _active_worker = SENDER_IDX;
-            if (_recevie_on_interrupt)
+            if (_active_worker != SENDER_IDX)
             {
-                _lora_interface.idle();
+                // We're up. Start sending our packets
+                DBG_LOG_DEBUG("GL: sending\n");
+                digitalWrite(LED_BUILTIN, HIGH);
+                _active_worker = SENDER_IDX;
+                if (_recevie_on_interrupt)
+                {
+                    _lora_interface.idle();
+                }
+                _location_sender.start_sending_locations(second);
             }
-            _location_sender.start_sending_locations(second);
         }
         else
         {
-            // Not our turn. Enable listener
-            DBG_LOG_DEBUG("GL: listening\n");
-            digitalWrite(LED_BUILTIN, LOW);
-            _active_worker = LISTENER_IDX;
-            if (_recevie_on_interrupt)
+            if (_active_worker != LISTENER_IDX)
             {
-                _lora_interface.receive();
+                // Not our turn. Enable listener
+                DBG_LOG_DEBUG("GL: listening\n");
+                digitalWrite(LED_BUILTIN, LOW);
+                _active_worker = LISTENER_IDX;
+                if (_recevie_on_interrupt)
+                {
+                    _lora_interface.receive();
+                }
             }
         }
         

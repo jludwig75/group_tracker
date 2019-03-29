@@ -17,14 +17,11 @@
 #define GPS_TX_PIN          11
 #define PPS_INTERRUPT_PIN   2
 
-#define STATIONS_PER_GROUP          30
-#define TX_TIME_SEC                 1
+#define STATIONS_PER_GROUP          4
+#define TX_TIME_SEC                 2
 
-#define STATION_ID  5
+#define STATION_ID  2
 
-#ifndef digitalPinToInterrupt
-#define digitalPinToInterrupt(x)    x
-#endif  // digitalPinToInterrupt
 
 HwLoRaInterface lora(LoRa);
 
@@ -92,6 +89,7 @@ void setup()
 
     LoRa.setTxPower(20);
     LoRa.setSpreadingFactor(8);
+    LoRa.setSignalBandwidth(62.5E3);
     LoRa.onReceive(on_lora_receive);
 
     // Start the locator
