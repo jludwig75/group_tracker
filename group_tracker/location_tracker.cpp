@@ -60,7 +60,10 @@ void LocationTracker::do_work()
         boolean date_and_time_updated = false;
         if (!_gps.parse(_gps.lastNMEA(), &date_and_time_updated))   // this also sets the newNMEAreceived() flag to false
         {
-            DBG_LOG_DEBUG("LT: parse err: %s\n", _gps.lastNMEA());
+            if (strlen(_gps.lastNMEA()) >= 6 && (strncmp(_gps.lastNMEA(), "$GPGGA", 6) == 0 || strncmp(_gps.lastNMEA(), "$GPRMC", 6) == 0))
+            {
+                DBG_LOG_ERROR("LT: parse err: %s\n", _gps.lastNMEA());
+            }
             return;  // we can fail to parse a sentence in which case we should just wait for the next sentence.
         }
         if (_gps.fix > 0 && date_and_time_updated)

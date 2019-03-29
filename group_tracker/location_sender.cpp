@@ -52,7 +52,7 @@ void LocationSender::do_work()
         }
         break;
     case SEND_PEER_LOCATIONS:
-        DBG_LOG_INFO("LS: sending peer locs\n");
+        DBG_LOG_DEBUG("LS: sending peer locs\n");
         result = _ops.send_peer_locations();
         if (result == LocationSenderOperations::Advance ||
             result == LocationSenderOperations::Terminate)

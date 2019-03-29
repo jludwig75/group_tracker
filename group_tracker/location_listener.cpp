@@ -5,6 +5,10 @@
 #define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
+#if DBG_LOG_LEVEL >= DBG_LOG_LEVEL_INFO
+#include <Arduino.h>
+#endif // DBG_LOG_LEVEL >= DBG_LOG_LEVEL_INFO
+
 
 
 LocationListener::LocationListener(uint32_t station_id, LoRaInterface &lora_interface) :
@@ -100,7 +104,12 @@ void LocationListener::do_work()
         if (_location.get_station_id() != _station_id)
         {
             // Don't store our own location as a peer location.
-            DBG_LOG_INFO("LL: storing loc %u:(%f, %f)\n", _location.get_station_id(), _location.get_latitude(), _location.get_longitude());
+            DBG_LOG_INFO("LL: storing loc %u:\n", _location.get_station_id());
+#if DBG_LOG_LEVEL >= DBG_LOG_LEVEL_INFO
+            Serial.print(_location.get_latitude(), 5);
+            Serial.print(",");
+            Serial.println(_location.get_longitude(), 5);
+#endif // DBG_LOG_LEVEL >= DBG_LOG_LEVEL_INFO
             _peer_locations.store_location(_lora_interface.packetRssi(), _lora_interface.packetSnr(), _location);
         }
         else

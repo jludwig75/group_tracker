@@ -20,7 +20,7 @@
 #define STATIONS_PER_GROUP          30
 #define TX_TIME_SEC                 1
 
-#define STATION_ID  3
+#define STATION_ID  5
 
 #ifndef digitalPinToInterrupt
 #define digitalPinToInterrupt(x)    x
