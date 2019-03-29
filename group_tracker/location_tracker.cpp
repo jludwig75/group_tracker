@@ -60,7 +60,7 @@ void LocationTracker::do_work()
         boolean date_and_time_updated = false;
         if (!_gps.parse(_gps.lastNMEA(), &date_and_time_updated))   // this also sets the newNMEAreceived() flag to false
         {
-            DBG_LOG_ERROR("LT: parse err: %s\n", _gps.lastNMEA());
+            DBG_LOG_DEBUG("LT: parse err: %s\n", _gps.lastNMEA());
             return;  // we can fail to parse a sentence in which case we should just wait for the next sentence.
         }
         if (_gps.fix > 0 && date_and_time_updated)
@@ -77,7 +77,12 @@ void LocationTracker::do_work()
             tm.Second = _gps.seconds;
             time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
             DBG_LOG_INFO("LT: updated loc\n");
-            _gps_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitude, _gps.latitude);
+#if DBG_LOG_LEVEL >= DBG_LOG_LEVEL_DEBUG
+            Serial.print(_gps.latitudeDegrees, 5);
+            Serial.print(",");
+            Serial.println(_gps.longitudeDegrees, 5);
+#endif // DBG_LOG_LEVEL >= DBG_LOG_LEVEL_DEBUG
+            _gps_location = Location(_station_id, reading_time, (uint8_t)_gps.fix * 16 + _gps.fixquality, _gps.longitudeDegrees, _gps.latitudeDegrees);
             if (_gps_location.validate())
             {
                 _current_location = _gps_location;

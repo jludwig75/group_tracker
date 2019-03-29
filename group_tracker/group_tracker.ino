@@ -43,7 +43,7 @@ void pps_interrupt()
     locator.on_pps_interrupt();
 }
 
-#define NO_GPS
+//#define NO_GPS
 
 #ifdef  NO_GPS
 Timer t;
