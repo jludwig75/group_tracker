@@ -17,6 +17,9 @@ public:
     virtual float packetSnr();
     virtual long packetFrequencyError();
 
+    virtual void receive();
+    virtual void idle();
+
     // from Print
     virtual unsigned write(uint8_t byte);
     virtual unsigned write(const uint8_t *buffer, unsigned size);

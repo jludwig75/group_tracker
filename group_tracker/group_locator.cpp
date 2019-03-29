@@ -3,6 +3,8 @@
 #define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
+#include "lora_interface.h"
+
 #define GPS_IDX         0
 #define LISTENER_IDX    1
 #define SENDER_IDX      2
@@ -12,7 +14,8 @@ GroupLocator::GroupLocator(uint32_t station_id,
                            unsigned stations_per_group,
                            SoftwareSerial *gps_serial_interface,
                            LoRaInterface &lora_interface,
-                           unsigned transmission_time_sec) :
+                           unsigned transmission_time_sec,
+                           bool recevie_on_interrupt) :
     _station_id(station_id),
     _stations_per_group(stations_per_group),
     _active_worker(LISTENER_IDX),
@@ -22,10 +25,12 @@ GroupLocator::GroupLocator(uint32_t station_id,
     _location_tracker(station_id, gps_serial_interface, _gps_clock),
     _location_listener(station_id, lora_interface),
     _location_sender(lora_interface, _location_tracker, _location_listener),
+    _lora_interface(lora_interface),
+    _recevie_on_interrupt(recevie_on_interrupt),
     _workers()
 {
     _workers[GPS_IDX] = &_location_tracker;
-    _workers[LISTENER_IDX] = &_location_listener;
+    _workers[LISTENER_IDX] = _recevie_on_interrupt ? NULL : &_location_listener;
     _workers[SENDER_IDX] = &_location_sender;
 }
 
@@ -58,6 +63,10 @@ void GroupLocator::on_pps_interrupt()
             DBG_LOG_DEBUG("GL: sending\n");
             digitalWrite(LED_BUILTIN, HIGH);
             _active_worker = SENDER_IDX;
+            if (_recevie_on_interrupt)
+            {
+                _lora_interface.idle();
+            }
             _location_sender.start_sending_locations(second);
         }
         else
@@ -66,6 +75,10 @@ void GroupLocator::on_pps_interrupt()
             DBG_LOG_DEBUG("GL: listening\n");
             digitalWrite(LED_BUILTIN, LOW);
             _active_worker = LISTENER_IDX;
+            if (_recevie_on_interrupt)
+            {
+                _lora_interface.receive();
+            }
         }
         
         _enable_communication = true;
@@ -77,12 +90,22 @@ void GroupLocator::on_pps_interrupt()
     
 }
 
+void GroupLocator::on_lora_receive(int packet_size)
+{
+    _location_listener.on_receive(packet_size);
+}
+
+
 void GroupLocator::on_loop()
 {
     _workers[GPS_IDX]->do_work();
     if (_enable_communication)
     {
-        _workers[_active_worker]->do_work();
+        Worker *worker = _workers[_active_worker];
+        if (worker)
+        {
+            _workers[_active_worker]->do_work();
+        }
     }
 }
 

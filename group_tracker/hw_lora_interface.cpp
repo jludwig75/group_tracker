@@ -35,6 +35,17 @@ long HwLoRaInterface::packetFrequencyError()
     return _lora.packetFrequencyError();
 }
 
+void HwLoRaInterface::receive()
+{
+    _lora.receive();
+}
+
+void HwLoRaInterface::idle()
+{
+    _lora.idle();
+}
+
+
 // from Print
 unsigned HwLoRaInterface::write(uint8_t byte)
 {

@@ -19,6 +19,8 @@ public:
     const Location *get_fist_location() const;
     const Location *get_next_location(const Location *location) const;
 
+    void on_receive(int packet_size);
+
 private:
     virtual void do_work();
 

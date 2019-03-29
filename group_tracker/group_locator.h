@@ -21,11 +21,14 @@ public:
                  unsigned stations_per_group,
                  SoftwareSerial *gps_serial_interface,
                  LoRaInterface &lora_interface,
-                 unsigned transmission_time_sec);
+                 unsigned transmission_time_sec,
+                 bool recevie_on_interrupt = true);
 
     void begin();
 
     void on_pps_interrupt();
+
+    void on_lora_receive(int packet_size);
 
     void on_loop();
 
@@ -45,5 +48,7 @@ private:
     LocationTracker _location_tracker;
     LocationListener _location_listener;
     LocationSender _location_sender;
+    LoRaInterface &_lora_interface;
+    bool _recevie_on_interrupt;
     Worker *_workers[NUM_WORKERS];
 };

@@ -50,6 +50,15 @@ long LoRaInterfaceMock::packetFrequencyError()
     return 0;
 }
 
+void LoRaInterfaceMock::receive()
+{
+}
+
+void LoRaInterfaceMock::idle()
+{
+}
+
+
 // from Print
 unsigned LoRaInterfaceMock::write(uint8_t byte)
 {

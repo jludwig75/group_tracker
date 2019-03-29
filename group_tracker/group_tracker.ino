@@ -43,6 +43,11 @@ void pps_interrupt()
     locator.on_pps_interrupt();
 }
 
+void on_lora_receive(int pack_size)
+{
+    locator.on_lora_receive(pack_size);
+}
+
 //#define NO_GPS
 
 #ifdef  NO_GPS
@@ -85,6 +90,10 @@ void setup()
         while (1);
     }
 
+    LoRa.setTxPower(20);
+    LoRa.setSpreadingFactor(8);
+    LoRa.onReceive(on_lora_receive);
+
     // Start the locator
     locator.begin();
 
@@ -107,6 +116,9 @@ void setup()
         delay(250);
         digitalWrite(LED_BUILTIN, LOW);
     }
+
+    DBG_LOG_INFO("spreading factor =%u\n", LoRa.getSpreadingFactor());
+    DBG_LOG_INFO("signal bandwidth =%lu\n", LoRa.getSignalBandwidth());
 }
 
 void loop()
