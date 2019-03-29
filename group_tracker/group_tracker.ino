@@ -20,7 +20,7 @@
 #define STATIONS_PER_GROUP          4
 #define TX_TIME_SEC                 2
 
-#define STATION_ID  2
+#define STATION_ID  0
 
 
 HwLoRaInterface lora(LoRa);
@@ -91,6 +91,7 @@ void setup()
     LoRa.setSpreadingFactor(8);
     LoRa.setSignalBandwidth(62.5E3);
     LoRa.onReceive(on_lora_receive);
+    LoRa.setCodingRate4(8);
 
     // Start the locator
     locator.begin();

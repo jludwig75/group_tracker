@@ -57,7 +57,7 @@ void GroupLocator::on_pps_interrupt()
 
         DBG_LOG_DEBUG("active station = %lu, station ID = %lu\n", get_active_station_number(second), _station_id);
 
-        if (_station_id == get_active_station_number(second))
+        if (_station_id % _stations_per_group == get_active_station_number(second))
         {
             if (_active_worker != SENDER_IDX)
             {
