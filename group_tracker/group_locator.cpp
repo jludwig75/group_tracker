@@ -12,7 +12,7 @@
 
 GroupLocator::GroupLocator(uint32_t station_id,
                            unsigned stations_per_group,
-                           SoftwareSerial *gps_serial_interface,
+                           Stream *gps_serial_interface,
                            LoRaInterface &lora_interface,
                            unsigned transmission_time_sec,
                            bool recevie_on_interrupt) :

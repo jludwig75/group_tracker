@@ -1,6 +1,8 @@
 #include "gps_clock.h"
 
+#ifndef ESP32
 #include <util/atomic.h>
+#endif  // ESP32
 
 #include "debug_log.h"
 
@@ -67,7 +69,10 @@ void GpsClock::set_gps_time(uint16_t year, uint8_t month, uint8_t day, uint8_t h
 
 void GpsClock::set_gps_time(time_t t)
 {
+#ifndef ESP32
+  // TODO: Do something here
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+#endif  ESP32
   {
     _last_gps_time_sec = t;
   }
@@ -98,7 +103,10 @@ time_t GpsClock::get_time() const
   // subtraction will wrap too. This should stil work, but synchronization would be
   // good to be sure.
   time_t t;
+#ifndef ESP32
+  // TODO: Do something here
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+#endif  ESP32
   {
     t = _last_time_set + (micros() - _last_micros) / 1000000UL;
   }

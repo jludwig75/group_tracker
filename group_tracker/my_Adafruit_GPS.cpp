@@ -9,10 +9,6 @@ Written by Limor Fried/Ladyada for Adafruit Industries.
 BSD license, check license.txt for more information
 All text above must be included in any redistribution
 ****************************************/
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  // Only include software serial on AVR platforms (i.e. not on Due).
-  #include <SoftwareSerial.h>
-#endif
 #include "my_Adafruit_GPS.h"
 
 #include <math.h>
@@ -284,15 +280,10 @@ char Adafruit_GPS::read(void) {
   
   if (paused) return c;
 
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial) {
-    if(!gpsSwSerial->available()) return c;
-    c = gpsSwSerial->read();
-  } else 
-#endif
+  if (serial)
   {
-    if(!gpsHwSerial->available()) return c;
-    c = gpsHwSerial->read();
+    if(!serial->available()) return c;
+    c = serial->read();
   }
 
   //Serial.print(c);
@@ -326,31 +317,14 @@ char Adafruit_GPS::read(void) {
   return c;
 }
 
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-// Constructor when using SoftwareSerial or NewSoftSerial
-#if ARDUINO >= 100
-Adafruit_GPS::Adafruit_GPS(SoftwareSerial *ser)
-#else
-Adafruit_GPS::Adafruit_GPS(NewSoftSerial *ser) 
-#endif
-{
-  common_init();     // Set everything to common state, then...
-  gpsSwSerial = ser; // ...override gpsSwSerial with value passed.
-}
-#endif
-
-// Constructor when using HardwareSerial
-Adafruit_GPS::Adafruit_GPS(HardwareSerial *ser) {
+Adafruit_GPS::Adafruit_GPS(Stream *ser) {
   common_init();  // Set everything to common state, then...
-  gpsHwSerial = ser; // ...override gpsHwSerial with value passed.
+  serial = ser; // ...override gpsHwSerial with value passed.
 }
 
 // Initialization code used by all constructor types
 void Adafruit_GPS::common_init(void) {
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  gpsSwSerial = NULL; // Set both to NULL, then override correct
-#endif
-  gpsHwSerial = NULL; // port pointer in corresponding constructor
+  serial = NULL; // port pointer in corresponding constructor
   recvdflag   = false;
   paused      = false;
   lineidx     = 0;
@@ -366,25 +340,8 @@ void Adafruit_GPS::common_init(void) {
     speed = angle = magvariation = HDOP = 0.0; // float
 }
 
-void Adafruit_GPS::begin(uint32_t baud)
-{
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial) 
-    gpsSwSerial->begin(baud);
-  else 
-#endif
-    gpsHwSerial->begin(baud);
-
-  delay(10);
-}
-
 void Adafruit_GPS::sendCommand(const char *str) {
-#if defined(__AVR__) && defined(USE_SW_SERIAL)
-  if(gpsSwSerial) 
-    gpsSwSerial->println(str);
-  else    
-#endif
-    gpsHwSerial->println(str);
+    serial->println(str);
 }
 
 boolean Adafruit_GPS::newNMEAreceived(void) {

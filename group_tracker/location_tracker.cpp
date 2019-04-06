@@ -6,10 +6,9 @@
 #include "debug_log.h"
 
 #include <stdlib.h>
-#include <SoftwareSerial.h>
 
 
-LocationTracker::LocationTracker(uint32_t station_id, SoftwareSerial *gps_serial_interface, GpsClock &gps_clock) :
+LocationTracker::LocationTracker(uint32_t station_id, Stream *gps_serial_interface, GpsClock &gps_clock) :
     _station_id(station_id),
     _gps_serial_interface(gps_serial_interface),
     _gps(gps_serial_interface),
@@ -20,9 +19,6 @@ LocationTracker::LocationTracker(uint32_t station_id, SoftwareSerial *gps_serial
 
 void LocationTracker::begin()
 {
-    // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
-    _gps.begin(9600);
-    
     // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
     _gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
     // uncomment this line to turn on only the "minimum recommended" data

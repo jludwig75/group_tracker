@@ -1,7 +1,11 @@
 #include "debug_log.h"
 
-
 #include <Print.h>
+
+#ifdef  ESP32
+#include <stdarg.h>
+#include <stdio.h>
+#endif  // ESP32
 
 #ifndef PRINTF_BUF
 #define PRINTF_BUF  80
