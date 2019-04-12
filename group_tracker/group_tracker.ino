@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #ifndef ESP32
 #include <SoftwareSerial.h>
+#else   // ESP32
+#include <HardwareSerial.h>
 #endif  // ESP32
 #include <LoRa.h>
 #ifdef  NO_GPS
@@ -14,12 +16,27 @@
 #define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
+#ifdef ESP32
+
+#define LORA_SS_PIN         18
+#define LORA_RESET_PIN      16
+#define LORA_DIO0_PIN       26
+
+#define GPS_RX_PIN          16
+#define GPS_TX_PIN          17
+#define PPS_INTERRUPT_PIN   36
+
+#else   // ESP32
+
 #define LORA_SS_PIN         8
 #define LORA_RESET_PIN      4
 #define LORA_DIO0_PIN       7
+
 #define GPS_RX_PIN          10
 #define GPS_TX_PIN          11
 #define PPS_INTERRUPT_PIN   2
+
+#endif  // ESP32
 
 #define STATIONS_PER_GROUP          4
 #define TX_TIME_SEC                 2
@@ -32,7 +49,7 @@ HwLoRaInterface lora(LoRa);
 #ifndef ESP32
 SoftwareSerial gps_serial_port(GPS_RX_PIN, GPS_TX_PIN);
 #else   // ESP32
-HardwareSerial & gps_serial_port = Serial2;
+HardwareSerial gps_serial_port(2);
 #endif  // ESP32
 
 GroupLocator locator(STATION_ID,
@@ -102,7 +119,11 @@ void setup()
     LoRa.setCodingRate4(8);
 
     // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
+#ifdef  ESP32
+    gps_serial_port.begin(9600, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
+#else   // ESP32
     gps_serial_port.begin(9600);
+#endif  // ESP32
     
     // Start the locator
     locator.begin();
