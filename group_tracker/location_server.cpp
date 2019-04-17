@@ -11,7 +11,7 @@
 
 
 const char* ssid = "Caradhras";
-const char* password = "Speak friend.";
+const char* password = "XXXXXXXX";
 
 WebServer server(80);
 
