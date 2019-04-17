@@ -18,6 +18,12 @@ LocationListener::LocationListener(uint32_t station_id, LoRaInterface &lora_inte
 {
 }
 
+const LocationList & LocationListener::get_location_list() const
+{
+    return _peer_locations;
+}
+
+
 static void discard_excess_rx_data(LoRaInterface & lora_interface, unsigned bytes_to_clear)
 {
     uint8_t i = 0;

@@ -58,6 +58,7 @@ void LocationList::store_location(int rssi, float snr, const Location &location)
                 // TODO: It may get overwtiten later. May be other ways to handle this.
                 _insertion_index = (_insertion_index + 1) % MAX_LOCATIONS_TO_STORE;
             }
+            return;
         }
     }
 
@@ -104,4 +105,3 @@ const Location *LocationList::get_next_location(const Location *location) const
     }
     return NULL;
 }
-

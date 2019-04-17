@@ -4,7 +4,7 @@
 #include "location_listener.h"
 #include "lora_interface.h"
 
-#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_OFF
+#define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
 
 #include <stdlib.h>

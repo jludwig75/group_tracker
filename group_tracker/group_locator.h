@@ -9,6 +9,7 @@
 class Stream;
 class Worker;
 class LoraInterface;
+class LocationList;
 
 
 #define NUM_WORKERS 3
@@ -34,6 +35,8 @@ public:
 
     void set_dummy_location(float latitude, float longitude);
     void set_dummy_time(time_t time);
+
+    const LocationList & get_location_list() const;
 
 private:
     uint32_t get_active_station_number(uint32_t second) const;

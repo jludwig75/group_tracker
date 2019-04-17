@@ -34,6 +34,12 @@ GroupLocator::GroupLocator(uint32_t station_id,
     _workers[SENDER_IDX] = &_location_sender;
 }
 
+const LocationList & GroupLocator::get_location_list() const
+{
+    return _location_listener.get_location_list();
+}
+
+
 void GroupLocator::begin()
 {
     DBG_LOG_INFO("GL: starting\n");

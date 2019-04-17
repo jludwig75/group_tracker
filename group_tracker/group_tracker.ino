@@ -12,6 +12,7 @@
 #include "group_locator.h"
 #include "lora_interface.h"
 #include "hw_lora_interface.h"
+#include "location_server.h"
 
 #define DBG_LOG_LEVEL   DBG_LOG_LEVEL_INFO
 #include "debug_log.h"
@@ -41,7 +42,7 @@
 #define STATIONS_PER_GROUP          4
 #define TX_TIME_SEC                 2
 
-#define STATION_ID  0
+#define STATION_ID  3
 
 
 HwLoRaInterface lora(LoRa);
@@ -56,7 +57,15 @@ GroupLocator locator(STATION_ID,
                      STATIONS_PER_GROUP,
                      &gps_serial_port,
                      lora,
-                     TX_TIME_SEC);
+                     TX_TIME_SEC,
+#ifdef  ESP32
+                     false
+#else   // ESP32
+                     true
+#endif  // ESP32
+                     );
+
+LocationServer location_server(locator.get_location_list());
 
 DebugLog debug_log(Serial);
 
@@ -115,7 +124,9 @@ void setup()
     LoRa.setTxPower(20);
     LoRa.setSpreadingFactor(8);
     LoRa.setSignalBandwidth(62.5E3);
+#ifndef  ESP32
     LoRa.onReceive(on_lora_receive);
+#endif  // ESP32
     LoRa.setCodingRate4(8);
 
     // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
@@ -127,6 +138,8 @@ void setup()
     
     // Start the locator
     locator.begin();
+
+    location_server.begin();
 
 #ifdef  NO_GPS
     setup_no_gps();
@@ -155,4 +168,5 @@ void loop()
     t.update();
 #endif  // NO_GPS
     locator.on_loop();
+    location_server.on_loop();
 }

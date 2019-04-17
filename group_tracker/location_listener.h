@@ -6,6 +6,7 @@
 #include "location_list.h"
 
 class LoRaInterface;
+class LocationList;
 
 
 #define MAX_PEER_LOCATIONS  4
@@ -20,6 +21,8 @@ public:
     const Location *get_next_location(const Location *location) const;
 
     void on_receive(int packet_size);
+
+    const LocationList & get_location_list() const;
 
 private:
     virtual void do_work();
