@@ -74,7 +74,14 @@ void LocationTracker::do_work()
             tm.Hour = _gps.hour;
             tm.Minute = _gps.minute;
             tm.Second = _gps.seconds;
-            time_t reading_time = makeTime(tm); // TODO: What epoch? Who hanels beginnig of yeat epoch? Probably this code.
+            time_t reading_time = makeTime(tm);
+            tm.Month = 1;
+            tm.Day = 1;
+            tm.Hour = 0;
+            tm.Minute = 0;
+            tm.Second = 0;
+            time_t epoch_start = makeTime(tm);
+            Location::set_epoch(epoch_start);
             DBG_LOG_INFO("LT: updated loc\n");
 #if DBG_LOG_LEVEL >= DBG_LOG_LEVEL_DEBUG
             Serial.print(_gps.latitudeDegrees, 5);

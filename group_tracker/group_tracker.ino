@@ -42,7 +42,7 @@
 #define STATIONS_PER_GROUP          4
 #define TX_TIME_SEC                 2
 
-#define STATION_ID  3
+#define STATION_ID  0
 
 
 HwLoRaInterface lora(LoRa);

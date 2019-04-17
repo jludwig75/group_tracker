@@ -28,6 +28,8 @@ public:
     bool pack(uint8_t *blob_buffer, unsigned buffer_bytes) const;
 
     void increment_hop_count();
+
+    static void set_epoch(uint32_t epoch);
     
 private:
     uint32_t _station_id;
@@ -36,4 +38,6 @@ private:
     uint8_t _accuracy;
     float _longitude;
     float _latitude;
+
+    static uint32_t _epoch;
 };

@@ -69,6 +69,14 @@ static float map_blob_value_to_coord_space(uint32_t blob_value)
 }
 
 
+uint32_t Location::_epoch;
+
+void Location::set_epoch(uint32_t epoch)
+{
+    _epoch = epoch;
+}
+
+
 Location::Location(uint32_t station_id, uint32_t timestamp, uint8_t accuracy, float longitude, float latitude) :
     _station_id(station_id),
     _timestamp(timestamp),
@@ -131,7 +139,7 @@ bool Location::un_pack(const uint8_t *blob_buffer, unsigned buffer_bytes)
     // TODO: Sanitize parameters (timestamp, longitude, latitude, accuracy) and check CRC.
 
     _station_id = blob->station_id;
-    _timestamp = blob->timestamp * SECONDS_PER_TS_UINT; // TODO: Add year start
+    _timestamp = blob->timestamp * SECONDS_PER_TS_UINT + _epoch;
     _accuracy = blob->accuracy;
     _hop_count = blob->hop_count;
     _latitude = sanitize_coord(map_blob_value_to_coord_space(((uint32_t)blob->latitude_hi) << 16 | (uint32_t)blob->latitude_lo), 90);
@@ -193,7 +201,7 @@ bool Location::pack(uint8_t *blob_buffer, unsigned buffer_bytes) const
     blob->station_id = _station_id;
     blob->accuracy = _accuracy;
     blob->hop_count = _hop_count;
-    blob->timestamp = _timestamp / SECONDS_PER_TS_UINT; // TODO: Subtract year start
+    blob->timestamp = (_timestamp - _epoch) / SECONDS_PER_TS_UINT;
     blob->longitude = map_coord_to_blob_space(_longitude);
     uint32_t latitude = map_coord_to_blob_space(_latitude);
     blob->latitude_lo = latitude & UINT16_MAX;
