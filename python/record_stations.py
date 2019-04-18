@@ -31,6 +31,11 @@ GPX_TRACK_START = '''  <trk>
     <trkseg>
 '''
 
+GPX_TRACK_POINT = '''      <trkpt lon="%.6f" lat="%.6f">
+        <time>%s</time>
+      </trkpt>
+'''
+
 GPX_TRACK_END = '''    </trkseg>
   </trk>
 '''
@@ -65,10 +70,7 @@ class GpxFileRecorder:
 
     def write_location(self, location):
         time_string = gpx_timestamp(location['timestamp'])
-        trkpt = '''      <trkpt lon="%.6f" lat="%.6f">
-        <time>%s</time>
-      </trkpt>
-''' % (location['longitude'], location['latitude'], time_string)
+        trkpt = GPX_TRACK_POINT % (location['longitude'], location['latitude'], time_string)
         write_file_start = not os.path.isfile(self._file_name)
         with open(self._file_name, 'a') as f:
             if write_file_start:
